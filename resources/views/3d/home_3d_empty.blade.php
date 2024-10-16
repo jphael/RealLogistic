@@ -682,7 +682,7 @@ const pointerup = (event) => {
 
                     const formData = new FormData();
                     const category = document.querySelector('#category'),
-                    comment = document.querySelector('#comment'),
+                        comment = document.querySelector('#comment'),
                         first_name = document.querySelector('#first_name'),
                         last_name = document.querySelector('#last_name'),
                         email = document.querySelector('#email'),
