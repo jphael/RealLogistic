@@ -682,7 +682,7 @@ const pointerup = (event) => {
 
                     const formData = new FormData();
                     const category = document.querySelector('#category'),
-                        commment = document.querySelector('#commment'),
+                    comment = document.querySelector('#comment'),
                         first_name = document.querySelector('#first_name'),
                         last_name = document.querySelector('#last_name'),
                         email = document.querySelector('#email'),
@@ -699,7 +699,7 @@ const pointerup = (event) => {
                     formData.append('start', start);
                     formData.append('finish', end);
                     formData.append('category', category.value);
-                    formData.append('commment', commment.value);
+                    formData.append('comment', comment.value);
                     formData.append('first_name', first_name.value);
                     formData.append('last_name', last_name.value);
                     formData.append('email', email.value);
