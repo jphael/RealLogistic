@@ -13,46 +13,53 @@ class ThreeDController extends Controller
 {
     public function getFreeBoxes(Request $request)
     {
-        $start = $request->input('start');
-        $finish = $request->input('finish');
+        try {
+            $start = $request->input('start');
+            $finish = $request->input('finish');
 
-        if (!$start || !$finish) {
-            return response()->json(['error' => 'Missing parameters'], 400);
-        }
+            if (!$start || !$finish) {
+                return response()->json(['error' => 'Missing parameters'], 400);
+            }
 
-        $cacheKey = 'free_boxes_' . md5($start . $finish);
-        $freeBoxes = Cache::remember($cacheKey, 86400, function () use ($start, $finish) {
-            $boxes = DB::table('delivtoo_boxes')->orderBy('title')->get();
-            $boxPrices = DB::table('delivtoo_boxes_price')->pluck('price', 'box_id');
+            $cacheKey = 'free_boxes_reallogistic_' . md5($start . $finish);
 
-            $freeBoxes = [];
-            $amount = 1; // Ensure amount is initialized here
+            $freeBoxes = Cache::remember($cacheKey, 86400, function () use ($start, $finish) {
+                $boxes = DB::table('reallogistic_boxes')->orderBy('title')->get();
+                $boxPrices = DB::table('reallogistic_boxes_price')->pluck('price', 'id');
 
-            foreach ($boxes as $box) {
-                for ($i = 1; $i <= $box->amount; $i++) {
-                    for ($e = 0; $e <= 3; $e++) {
-                        for ($c = 1; $c <= 3; $c++) {
-                            $boxId = $box->title . str_pad($amount, 4, '0', STR_PAD_LEFT) . "E$e" . "C$c";
-                            $reserved = DB::table('delivtoo_reserve')
-                                ->where('box_id', $boxId)
-                                ->where('start', '<=', strtotime($finish))
-                                ->where('finish', '>=', strtotime($start))
-                                ->exists();
+                $freeBoxes = [];
+                $amount = 1; // Ensure amount is initialized here
 
-                            if (!$reserved) {
-                                $price = $boxPrices[$boxId] ?? 0;
-                                $freeBoxes[] = ['box_id' => $boxId, 'price' => $price];
+
+                foreach ($boxes as $box) {
+                    for ($i = 1; $i <= $box->amount; $i++) {
+                        for ($e = 0; $e <= 3; $e++) {
+                            for ($c = 1; $c <= 3; $c++) {
+                                $boxId = $box->title . str_pad($amount, 4, '0', STR_PAD_LEFT) . "E$e" . "C$c";
+                                $reserved = DB::table('reallogistic_reserve')
+                                    ->where('box_id', $boxId)
+                                    ->where('start', '<=', strtotime($finish))
+                                    ->where('finish', '>=', strtotime($start))
+                                    ->exists();
+
+                                if (!$reserved) {
+                                    $price = $boxPrices[$boxId] ?? 0;
+                                    $freeBoxes[] = ['box_id' => $boxId, 'price' => $price];
+                                }
+                                $amount++; // Increment amount here
                             }
-                            $amount++; // Increment amount here
                         }
                     }
                 }
-            }
 
-            return $freeBoxes;
-        });
 
-        return response()->json($freeBoxes);
+                return $freeBoxes;
+            });
+
+            return response()->json($freeBoxes);
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     public function reserveBoxesWithData(Request $request)
@@ -72,18 +79,18 @@ class ThreeDController extends Controller
             $reserveIds = [];
 
             foreach ($boxIds as $boxId) {
-                $reserved = DB::table('delivtoo_reserve')
+                $reserved = DB::table('reallogistic_reserve')
                     ->where('box_id', $boxId)
                     ->where('start', strtotime($start))
                     ->where('finish', strtotime($finish))
                     ->exists();
 
                 if (!$reserved) {
-                    $reserveId = DB::table('delivtoo_reserve')->insertGetId([
+                    $reserveId = DB::table('reallogistic_reserve')->insertGetId([
                         'box_id' => $boxId,
                         'start' => strtotime($start),
                         'finish' => strtotime($finish),
-                        'price' => 200
+                        //'price' => 200
                     ]);
                     $reserveIds[] = $reserveId;
                 }
@@ -95,7 +102,7 @@ class ThreeDController extends Controller
                 Storage::putFileAs('uploads', $file, $fileName);
             }
 
-            DB::table('delivtoo_reserve_data')->insert([
+            DB::table('reallogistic_reserve_data')->insert([
                 'reserve_ids' => implode(',', $reserveIds),
                 'category' => $request->input('category', ''),
                 'file' => $fileName,
@@ -107,7 +114,7 @@ class ThreeDController extends Controller
             ]);
 
             // Clear cache for free boxes
-            $cacheKey = 'free_boxes_' . md5($start . $finish);
+            $cacheKey = 'free_boxes_reallogistic_' . md5($start . $finish);
             Cache::forget($cacheKey);
 
             // $this->sendEmailNotification($request, $boxIds, $fileName);
