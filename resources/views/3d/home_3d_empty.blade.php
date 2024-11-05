@@ -306,33 +306,58 @@
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
     loader.setDRACOLoader(dracoLoader);
     const dataList = [{
-            name: 'shelving',
-            url: '3d/Rack.glb'
+            name: 'Back',
+            url: '3drl/Back.glb'
         },
         {
-            name: 'floor',
-            url: '3d/Floor.glb'
+            name: 'Bureaux',
+            url: '3drl/Bureaux.glb'
+        },
+        {
+            name: 'Floor',
+            url: '3drl/Floor.glb'
         },
         {
             name: 'front',
-            url: '3d/Front.glb'
-        },
-        {
-            name: 'back',
-            url: '3d/Back.glb'
+            url: '3drl/Front.glb'
         },
         {
             name: 'left',
-            url: '3d/Left.glb'
+            url: '3drl/Left.glb'
         },
         {
             name: 'right',
-            url: '3d/Right.glb'
+            url: '3drl/Right.glb'
         },
         {
-            name: 'room',
-            url: '3d/Room.glb'
+            name: 'rackA1',
+            url: '3drl/Rack A1.glb'
         },
+        {
+            name: 'rackA3',
+            url: '3drl/Rack A3.glb'
+        },
+        {
+            name: 'rackA4',
+            url: '3drl/Rack A4.glb'
+        },
+        {
+            name: 'rackB2',
+            url: '3drl/Rack B2.glb'
+        },
+        {
+            name: 'rackB6',
+            url: '3drl/Rack B6.glb'
+        },
+        {
+            name: 'rackB12',
+            url: '3drl/Rack B12.glb'
+        },
+        {
+            name: 'rackB13',
+            url: '3drl/Rack B13.glb'
+        }
+        
     ];
     const dateToServerStr = (d) => d.getDate().toString().padStart(2, '0') + '.' + (d.getMonth() + 1).toString().padStart(2, '0') + '.' + d.getFullYear();
     const dateToStr = (d) => d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0');
@@ -341,17 +366,25 @@
 
 
     const onAllLoad = () => {
-        const shelving = getDataByName('shelving').gltf.scene;
-        const floor = getDataByName('floor').gltf.scene;
+        const Bureaux = getDataByName('Bureaux').gltf.scene;
+        const floor = getDataByName('Floor').gltf.scene;
         const front = getDataByName('front').gltf.scene;
-        const back = getDataByName('back').gltf.scene;
+        // back = getDataByName('back').gltf.scene;
         const left = getDataByName('left').gltf.scene;
         const right = getDataByName('right').gltf.scene;
-        const room = getDataByName('room').gltf.scene;
+        const Back = getDataByName('Back').gltf.scene;
+        const rackA1 = getDataByName('rackA1').gltf.scene;
+        const rackA3 = getDataByName('rackA3').gltf.scene;
+        const rackA4 = getDataByName('rackA4').gltf.scene;
+        const rackB2 = getDataByName('rackB2').gltf.scene;
+        const rackB6 = getDataByName('rackB6').gltf.scene;
+        const rackB12 = getDataByName('rackB12').gltf.scene;
+        const rackB13 = getDataByName('rackB13').gltf.scene;
+
         const box = new Box3();
         let backZ, leftX, rightX;
         // back
-        box.expandByObject(back); // console.log( box );
+        /*box.expandByObject(back); // console.log( box );
         backZ = box.max.z;
         back.userData.position = new Vector3(0, 0, backZ);
         back.userData.normal = new Vector3(0, 0, 1);
@@ -366,13 +399,36 @@
         box.expandByObject(right); // console.log( box );
         rightX = box.min.x;
         right.userData.position = new Vector3(rightX, 0, 0);
-        right.userData.normal = new Vector3(-1, 0, 0);
-        // office
-        room.userData.position = new Vector3(rightX, 0, 0);
-        room.userData.normal = new Vector3(-1, 0, 0);
+        right.userData.normal = new Vector3(-1, 0, 0);*/
         //
-        walls.push(back, left, right /*, room*/ );
-        scene.add(floor, front, back, left, right, room);
+        //walls.push(back, left, right /*, room*/ );
+        //scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3,rackA4,rackB2,rackB6,rackB12,rackB13);
+        scene.add(Back,Bureaux,floor,front,left,right,rackA1);
+        const boundingBox = new Box3().setFromObject(rackA1);
+const sizerack1 = new Vector3();
+boundingBox.getSize(sizerack1);
+
+// Cloner le rack pour créer une copie.
+const rackA1Clone = rackA1.clone();
+
+if (sizerack1.x >= sisizerack1.z) {
+    // Décalage sur l'axe X
+    rackA1Clone.position.set(
+        rackA1.position.x + sizerack1.x,  // Décaler de la largeur de rackA1 sur X
+        rackA1.position.y,           // Même position en Y
+        rackA1.position.z            // Même position en Z
+    );
+} else {
+    // Décalage sur l'axe Z
+    rackA1Clone.position.set(
+        rackA1.position.x,           // Même position en X
+        rackA1.position.y,           // Même position en Y
+        rackA1.position.z + sizerack1.z   // Décaler de la profondeur de rackA1 sur Z
+    );
+}
+
+// Ajouter le clone à la scène.
+scene.add(rackA1Clone);
         // shelving
         shelving.traverse(mesh => {
             if (mesh.material && mesh.material.name == 'Box') {
@@ -451,49 +507,49 @@
             const c5 = shelving.clone();
             processShelving(c5, 'A');
             c5.position.set(leftX + size.x / 2, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c5);
+            //scene.add(c5);
         }
         for (let i = 1; i < 17; i++) {
             const c4 = shelving.clone();
             processShelving(c4, 'B');
             c4.position.set(-(ox + size.x * 2) + size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c4);
+            //scene.add(c4);
         }
         for (let i = 1; i < 17; i++) {
             const c3 = shelving.clone();
             processShelving(c3, 'C');
             c3.position.set(-(ox + size.x * 2) + size.x / 2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c3);
+            //scene.add(c3);
         }
         for (let i = 1; i < 17; i++) {
             const c2 = shelving.clone();
             processShelving(c2, 'D');
             c2.position.set(size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c2);
+            //scene.add(c2);
         }
         for (let i = 1; i < 17; i++) {
             const c1 = shelving.clone();
             processShelving(c1, 'E');
             c1.position.set(size.x / 2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c1);
+            //scene.add(c1);
         }
         for (let i = 1; i < 17; i++) {
             const c6 = shelving.clone();
             processShelving(c6, 'F');
             c6.position.set((ox + size.x * 2) + size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            scene.add(c6);
+            //scene.add(c6);
         }
         for (let i = 1; i < 11; i++) {
             const c7 = shelving.clone();
             processShelving(c7, 'G');
             c7.position.set((ox + size.x * 2) + size.x / 2 + cx, 0, backZ + size.z / 2 + (10 - i) * size.z);
-            scene.add(c7);
+            //scene.add(c7);
         }
         for (let i = 3; i < 9; i++) {
             const c8 = shelving.clone();
             processShelving(c8, 'H');
             c8.position.set(rightX - size.x / 2, 0, backZ + size.z / 2 + (10 - i) * size.z + (size.z / 3));
-            scene.add(c8);
+            //scene.add(c8);
         }
         startDateInput.min =
             endDateInput.min = dateToStr(new Date());
@@ -531,8 +587,8 @@
         const start = dateToServerStr(strToDate(startDateInput.value));
         const end = dateToServerStr(strToDate(endDateInput.value));
 
-        fetch('{{ route('
-                api.boxes.free ') }}?start=' + start + '&finish=' + end)
+        
+        fetch('{{ route('api.boxes.free') }}?start=' + start + '&finish=' + end)
             .then(response => {
                 if (!response.ok) throw new Error('HTTPError, status = ' + response.status);
                 return response.json();
