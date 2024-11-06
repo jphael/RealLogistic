@@ -331,11 +331,11 @@
         },
         {
             name: 'rackA1',
-            url: '3drl/Rack A1.glb'
+            url: '3drl/rackA1maj.glb'
         },
         {
             name: 'rackA3',
-            url: '3drl/Rack A3.glb'
+            url: '3drl/rackA3maj.glb'
         },
         {
             name: 'rackA4',
@@ -403,7 +403,7 @@
         //
         //walls.push(back, left, right /*, room*/ );
         //scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3,rackA4,rackB2,rackB6,rackB12,rackB13);
-        scene.add(Back,Bureaux,floor,front,left,right,rackA1);
+        scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3);
         const boundingBox = new Box3().setFromObject(rackA1);
 const sizerack1 = new Vector3();
 boundingBox.getSize(sizerack1);
@@ -411,7 +411,7 @@ boundingBox.getSize(sizerack1);
 // Cloner le rack pour créer une copie.
 const rackA1Clone = rackA1.clone();
 
-if (sizerack1.x >= sisizerack1.z) {
+if (sizerack1.x >= sizerack1.z) {
     // Décalage sur l'axe X
     rackA1Clone.position.set(
         rackA1.position.x + sizerack1.x,  // Décaler de la largeur de rackA1 sur X
@@ -429,6 +429,17 @@ if (sizerack1.x >= sisizerack1.z) {
 
 // Ajouter le clone à la scène.
 scene.add(rackA1Clone);
+const boundingBoxA3 = new Box3().setFromObject(rackA3);
+const sizerack3 = new Vector3();
+boundingBoxA3.getSize(sizerack3);
+const rackA3Clone = rackA3.clone();
+rackA3Clone.position.set(
+        rackA3.position.x,           // Même position en X
+        rackA3.position.y,           // Même position en Y
+        rackA3.position.z + sizerack1.z   // Décaler de la profondeur de rackA1 sur Z
+    );
+    scene.add(rackA3Clone);
+
         // shelving
         shelving.traverse(mesh => {
             if (mesh.material && mesh.material.name == 'Box') {
@@ -987,7 +998,7 @@ scene.add(rackA1Clone);
         renderer.outputColorSpace = SRGBColorSpace;
         renderer.setPixelRatio(window.devicePixelRatio);
         domContainer.appendChild(renderer.domElement);
-        camera = new PerspectiveCamera(45, 1.0, 1, 3000);
+        camera = new PerspectiveCamera(5, 1.0, 1, 3000);
 
         scene = new Scene();
 
