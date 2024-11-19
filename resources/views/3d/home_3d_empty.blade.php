@@ -402,43 +402,134 @@
         right.userData.normal = new Vector3(-1, 0, 0);*/
         //
         //walls.push(back, left, right /*, room*/ );
-        //scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3,rackA4,rackB2,rackB6,rackB12,rackB13);
-        scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3);
-        const boundingBox = new Box3().setFromObject(rackA1);
-const sizerack1 = new Vector3();
-boundingBox.getSize(sizerack1);
+        scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3,rackB2,rackB6,rackB12,rackB13);
+        //scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3);
+ 
+ const boundingBox = new Box3().setFromObject(rackA1);
+ const sizerack1 = new Vector3();
+ boundingBox.getSize(sizerack1);
+ function cloneAndPosition(rack, lastRackPosition, offset) {
+     const clone = rack.clone();
+     if (sizerack1.x >= sizerack1.z) {
+        console.log( "xxxx" );
+         clone.position.x = lastRackPosition.x + offset * sizerack1.x;
+     } else {
+        console.log( "zzzz" );
+         clone.position.z = lastRackPosition.z + offset * sizerack1.z;
+     }
+     scene.add(clone);
+     return clone;
+ }
 
-// Cloner le rack pour créer une copie.
-const rackA1Clone = rackA1.clone();
+ let lastRack = cloneAndPosition(rackA1, rackA1.position, 1);
 
-if (sizerack1.x >= sizerack1.z) {
-    // Décalage sur l'axe X
-    rackA1Clone.position.set(
-        rackA1.position.x + sizerack1.x,  // Décaler de la largeur de rackA1 sur X
-        rackA1.position.y,           // Même position en Y
-        rackA1.position.z            // Même position en Z
-    );
-} else {
-    // Décalage sur l'axe Z
-    rackA1Clone.position.set(
-        rackA1.position.x,           // Même position en X
-        rackA1.position.y,           // Même position en Y
-        rackA1.position.z + sizerack1.z   // Décaler de la profondeur de rackA1 sur Z
-    );
+ let offset = 2;
+
+ for (let i = 0; i < 7; i++) {
+     lastRack = cloneAndPosition(rackA1, lastRack.position, offset);
+     offset = 1;
+ }
+
+ lastRack = rackB2.clone();
+ for (let i = 0; i < 3; i++) {
+    lastRack = cloneAndPosition(lastRack, lastRack.position, offset);
+     offset = 1;
+ }
+
+
+ lastRack = cloneAndPosition(rackB2, rackB2.position, 5);
+ for (let i = 0; i < 11; i++) {
+    if(i==4 || i==5 ||i==6)
+    {
+        offset = 4; 
+        continue;
+    } 
+    lastRack = cloneAndPosition(lastRack, lastRack.position, offset);
+    offset = 1;
+ }
+
+ function cloneAndPositionPerpendicularAdroite(rack, lastRackPosition, offset) {
+    const clone = rack.clone();
+
+    // Si on souhaite que le clone soit perpendiculaire à l'original :
+    if (sizerack1.x >= sizerack1.z) {
+        // Si l'objet est plus large que profond, place le clone en décalant sur l'axe z
+        clone.position.x = lastRackPosition.x;
+        clone.position.z = lastRackPosition.z + offset * sizerack1.x;
+    } else {
+        // Si l'objet est plus profond que large, place le clone en décalant sur l'axe x
+        clone.position.x = lastRackPosition.x + offset * sizerack1.z;
+        clone.position.z = lastRackPosition.z;
+    }
+
+    // Ajouter le clone à la scène
+    scene.add(clone);
+    return clone;
+}
+lastRack = cloneAndPositionPerpendicularAdroite(rackB2, rackB2.position, 3);
+
+function cloneAndPositionAvant (rack, lastRackPosition, offset) {
+    const clone = rack.clone();
+
+    // Positionner le clone perpendiculaire mais du côté opposé (à l'ouest de l'origine)
+    if (sizerack1.x >= sizerack1.z) {
+        // Si l'objet est plus large que profond, place le clone sur l'axe x dans la direction opposée (ouest)
+        clone.position.x = lastRackPosition.x - offset * sizerack1.x;
+        clone.position.z = lastRackPosition.z; // Garde la position z identique
+    } else {
+        // Si l'objet est plus profond que large, place le clone sur l'axe z dans la direction opposée (sud)
+        clone.position.x = lastRackPosition.x; // Garde la position x identique
+        clone.position.z = lastRackPosition.z - offset * sizerack1.z;
+    }
+
+    // Ajouter le clone à la scène
+    scene.add(clone);
+    return clone;
 }
 
-// Ajouter le clone à la scène.
-scene.add(rackA1Clone);
-const boundingBoxA3 = new Box3().setFromObject(rackA3);
-const sizerack3 = new Vector3();
-boundingBoxA3.getSize(sizerack3);
-const rackA3Clone = rackA3.clone();
-rackA3Clone.position.set(
-        rackA3.position.x,           // Même position en X
-        rackA3.position.y,           // Même position en Y
-        rackA3.position.z + sizerack1.z   // Décaler de la profondeur de rackA1 sur Z
-    );
-    scene.add(rackA3Clone);
+lastRack = cloneAndPositionAvant(rackB2, rackB2.position, 2);
+
+function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction) {
+    const clone = rack.clone();
+
+    // Positionner le clone perpendiculairement selon la direction choisie
+    switch (direction) {
+        case "est":
+            clone.position.x = lastRackPosition.x + offset * sizerack1.x;
+            clone.position.z = lastRackPosition.z; // Même position z
+            break;
+        
+        case "ouest":
+            clone.position.x = lastRackPosition.x - offset * sizerack1.x;
+            clone.position.z = lastRackPosition.z; // Même position z
+            break;
+        
+        case "nord":
+            clone.position.x = lastRackPosition.x; // Même position x
+            clone.position.z = lastRackPosition.z - offset * sizerack1.z;
+            break;
+        
+        case "sud":
+            clone.position.x = lastRackPosition.x; // Même position x
+            clone.position.z = lastRackPosition.z + offset * sizerack1.z;
+            break;
+        
+        default:
+            console.error("Direction non valide ! Utilisez 'est', 'ouest', 'nord' ou 'sud'.");
+            return null;
+    }
+
+    // Ajouter le clone à la scène
+    scene.add(clone);
+    return clone;
+}
+lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 28,"sud");
+lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3,"ouest");
+
+for (let i = 0; i < 20; i++) {
+    lastRack = cloneAndPositionInDirection(lastRack, lastRack.position, offset,"sud");
+     offset = 1;
+ }
 
         // shelving
         shelving.traverse(mesh => {
@@ -998,8 +1089,9 @@ rackA3Clone.position.set(
         renderer.outputColorSpace = SRGBColorSpace;
         renderer.setPixelRatio(window.devicePixelRatio);
         domContainer.appendChild(renderer.domElement);
-        camera = new PerspectiveCamera(5, 1.0, 1, 3000);
-
+        camera = new PerspectiveCamera(45, 1.0, 1, 3000);
+		camera.position.set(150, 50, 0);
+ 
         scene = new Scene();
 
         scene.add(camera);
@@ -1022,8 +1114,6 @@ rackA3Clone.position.set(
         controls.screenSpacePanning = false;
         controls.enableDamping = true;
         controls.dampingFactor = 0.1;
-        controls.minDistance =
-            controls.maxDistance = 600;
         controls.maxPolarAngle =
             controls.minPolarAngle = Math.PI / 180 * 80;
         controls.update();
@@ -1035,8 +1125,8 @@ rackA3Clone.position.set(
 
         controls.maxPolarAngle = Math.PI / 180 * 87;
         controls.minPolarAngle = 0;
-        controls.minDistance = 200;
-        controls.maxDistance = 1000;
+        controls.minDistance = 100;
+        controls.maxDistance = 300;
         controls.reset();
 
         const isAllLoaded = () => dataList.filter(data => data.loaded !== true).length == 0;

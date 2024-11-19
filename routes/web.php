@@ -12,6 +12,10 @@ Route::get('/logistics', function () {
 })->name('logistics');
 
 
+Route::get('/empty', function () {
+    return view('3d.home_3d_empty');
+})->name('empty');
+
 Route::get('/api/boxes/free', [ThreeDController::class, 'getFreeBoxes'])->name('api.boxes.free');
 Route::post('api/boxes/data', [ThreeDController::class, 'reserveBoxesWithData'])->name('api.boxes.data');
 
