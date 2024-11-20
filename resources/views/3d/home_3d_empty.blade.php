@@ -288,6 +288,8 @@
     const tableorderList = document.querySelector('#tableorderList');
     const validateButton = document.querySelector('#validateButton');
 
+    const mouse  = new Vector2();
+
     const ray = new Vector2();
     const raycaster = new Raycaster();
     const boxes = [];
@@ -359,6 +361,8 @@
         }
         
     ];
+    const racks = [];
+
     const dateToServerStr = (d) => d.getDate().toString().padStart(2, '0') + '.' + (d.getMonth() + 1).toString().padStart(2, '0') + '.' + d.getFullYear();
     const dateToStr = (d) => d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0');
     const strToDate = (s) => new Date(s);
@@ -489,9 +493,10 @@ function cloneAndPositionAvant (rack, lastRackPosition, offset) {
 
 lastRack = cloneAndPositionAvant(rackB2, rackB2.position, 2);
 
-function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction) {
+function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction,name) {
     const clone = rack.clone();
-
+    clone.name = name; // Attribuer un nom unique
+    clone.userData.price = 10; // Attribuer le prix dans les données utilisateur
     // Positionner le clone perpendiculairement selon la direction choisie
     switch (direction) {
         case "est":
@@ -521,15 +526,18 @@ function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction) 
 
     // Ajouter le clone à la scène
     scene.add(clone);
+    racks.push(clone);
     return clone;
 }
-lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 28,"sud");
-lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3,"ouest");
+lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 28,"sud","test1");
+lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3,"ouest","test2");
 
 for (let i = 0; i < 20; i++) {
-    lastRack = cloneAndPositionInDirection(lastRack, lastRack.position, offset,"sud");
+    lastRack = cloneAndPositionInDirection(lastRack, lastRack.position, offset,"sud",`rack_${i}`);
      offset = 1;
  }
+
+ window.addEventListener('contextmenu', onRightClick, false);
 
         // shelving
         shelving.traverse(mesh => {
@@ -1221,5 +1229,26 @@ for (let i = 0; i < 20; i++) {
             childList: true
         });
     });
+
+ // Fonction pour gérer le clic droit
+function onRightClick(event) {
+    event.preventDefault(); // Empêcher le menu contextuel par défaut
+
+    // Calculer la position de la souris
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Effectuer le raycast uniquement sur les racks
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(racks); // Limite l'intersection aux racks
+
+    if (intersects.length > 0) {
+        const rack = intersects[0].object;
+        //const price = rack.userData.price;
+
+        // Afficher les informations du rack cliqué
+        alert(`Nom: ${rack.name}, Prix: 10€`);
+    }
+}
 </script>
 @endsection
