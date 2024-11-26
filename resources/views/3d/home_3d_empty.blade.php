@@ -148,97 +148,7 @@
 
     <div id="tooltip"></div>
 </div>
-<form id="data-form">
-    <p>Dimensions maximales pour une palette (L x R x H) 50cm x 50cm x 50cm</p>
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <h3 class="mb-0 text-center" style="font-size: 1.50rem;color:white;background:#05364d;">Palette(s) sélectionnée(s)</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center">
-                        <thead>
-                            <tr>
-                                <th>Nombre de palettes</th>
-                                <th>Nombre de jours</th>
-                                <th>Prix total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span id="paletteCount"></span></td>
-                                <td><span id="dayCount"></span></td>
-                                <td><span id="price"></span>€</td>
-                            </tr>
 
-                            <tr>
-                                <td colspan="3">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped text-center">
-                                            <thead>
-                                                <tr>
-                                                    <th>Palette</th>
-                                                    <th>Durée</th>
-                                                    <th>Prix/Jour</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="info">
-                                                <!-- Rows will be added dynamically by JavaScript -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="mb-3">
-                <label for="category" class="form-label">Catégorie</label>
-                <input type="text" id="category" class="form-control" placeholder="Catégorie">
-            </div>
-
-            <div class="mb-3">
-                <label for="file" class="form-label">Document</label>
-                <input type="file" id="file" class="form-control" placeholder="Aucun fichier choisit">
-            </div>
-
-            <div class="mb-3">
-                <label for="comment" class="form-label">Remarque</label>
-                <textarea id="comment" class="form-control" placeholder="Votre remarque" style="height: 100px; resize: none;"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="first_name" class="form-label required">Prénom</label>
-                <input type="text" id="first_name" class="form-control" value="{{ Auth::user()->prenom ?? '' }}" placeholder="Saisissez votre Prénom" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="last_name" class="form-label required">Nom de famille</label>
-                <input type="text" id="last_name" class="form-control" value="{{ Auth::user()->nom ?? '' }}" placeholder="Saisissez votre nom de famille" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="email" class="form-label required">E-mail</label>
-                <input type="email" id="email" class="form-control" value="{{ Auth::user()->email ?? '' }}" placeholder="Saisissez votre e-mail" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="phone" class="form-label required">Numéro de téléphone</label>
-                <input type="tel" id="phone" class="form-control" placeholder="Saisissez votre numéro de téléphone" required>
-            </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Valider</button>
-            </div>
-
-        </div>
-    </div>
-</form>
 
 <script src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.min.js" defer></script>
 <script type="importmap" defer>
@@ -288,7 +198,7 @@
     const tableorderList = document.querySelector('#tableorderList');
     const validateButton = document.querySelector('#validateButton');
 
-    const mouse  = new Vector2();
+    const mouse = new Vector2();
 
     const ray = new Vector2();
     const raycaster = new Raycaster();
@@ -359,7 +269,7 @@
             name: 'rackB13',
             url: '3drl/Rack B13.glb'
         }
-        
+
     ];
     const racks = [];
 
@@ -387,170 +297,102 @@
 
         const box = new Box3();
         let backZ, leftX, rightX;
-        // back
-        /*box.expandByObject(back); // console.log( box );
-        backZ = box.max.z;
-        back.userData.position = new Vector3(0, 0, backZ);
-        back.userData.normal = new Vector3(0, 0, 1);
-        // left
-        box.makeEmpty();
-        box.expandByObject(left); // console.log( box );
-        leftX = box.max.x;
-        left.userData.position = new Vector3(leftX, 0, 0);
-        left.userData.normal = new Vector3(1, 0, 0);
-        // right
-        box.makeEmpty();
-        box.expandByObject(right); // console.log( box );
-        rightX = box.min.x;
-        right.userData.position = new Vector3(rightX, 0, 0);
-        right.userData.normal = new Vector3(-1, 0, 0);*/
-        //
         //walls.push(back, left, right /*, room*/ );
-        scene.add(Back,Bureaux,floor,front,left,right,rackA1,rackA3,rackB2,rackB6,rackB12,rackB13);
+        scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3, rackB2, rackB6, rackB12, rackB13);
         //scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3);
- 
- const boundingBox = new Box3().setFromObject(rackA1);
- const sizerack1 = new Vector3();
- boundingBox.getSize(sizerack1);
- function cloneAndPosition(rack, lastRackPosition, offset) {
-     const clone = rack.clone();
-     if (sizerack1.x >= sizerack1.z) {
-        console.log( "xxxx" );
-         clone.position.x = lastRackPosition.x + offset * sizerack1.x;
-     } else {
-        console.log( "zzzz" );
-         clone.position.z = lastRackPosition.z + offset * sizerack1.z;
-     }
-     scene.add(clone);
-     return clone;
- }
 
- let lastRack = cloneAndPosition(rackA1, rackA1.position, 1);
+        const boundingBox = new Box3().setFromObject(rackA1);
+        const sizerack1 = new Vector3();
+        boundingBox.getSize(sizerack1);
 
- let offset = 2;
+        let serial = 0;
 
- for (let i = 0; i < 7; i++) {
-     lastRack = cloneAndPosition(rackA1, lastRack.position, offset);
-     offset = 1;
- }
+        const getSerial = () => (++serial).toString().padStart(4, '0');
+        let rakNumber = 1;
 
- lastRack = rackB2.clone();
- for (let i = 0; i < 3; i++) {
-    lastRack = cloneAndPosition(lastRack, lastRack.position, offset);
-     offset = 1;
- }
+        function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction, basename) {
+            const clone = rack.clone();
 
-
- lastRack = cloneAndPosition(rackB2, rackB2.position, 5);
- for (let i = 0; i < 11; i++) {
-    if(i==4 || i==5 ||i==6)
-    {
-        offset = 4; 
-        continue;
-    } 
-    lastRack = cloneAndPosition(lastRack, lastRack.position, offset);
-    offset = 1;
- }
-
- function cloneAndPositionPerpendicularAdroite(rack, lastRackPosition, offset) {
-    const clone = rack.clone();
-
-    // Si on souhaite que le clone soit perpendiculaire à l'original :
-    if (sizerack1.x >= sizerack1.z) {
-        // Si l'objet est plus large que profond, place le clone en décalant sur l'axe z
-        clone.position.x = lastRackPosition.x;
-        clone.position.z = lastRackPosition.z + offset * sizerack1.x;
-    } else {
-        // Si l'objet est plus profond que large, place le clone en décalant sur l'axe x
-        clone.position.x = lastRackPosition.x + offset * sizerack1.z;
-        clone.position.z = lastRackPosition.z;
-    }
-
-    // Ajouter le clone à la scène
-    scene.add(clone);
-    return clone;
-}
-lastRack = cloneAndPositionPerpendicularAdroite(rackB2, rackB2.position, 3);
-
-function cloneAndPositionAvant (rack, lastRackPosition, offset) {
-    const clone = rack.clone();
-
-    // Positionner le clone perpendiculaire mais du côté opposé (à l'ouest de l'origine)
-    if (sizerack1.x >= sizerack1.z) {
-        // Si l'objet est plus large que profond, place le clone sur l'axe x dans la direction opposée (ouest)
-        clone.position.x = lastRackPosition.x - offset * sizerack1.x;
-        clone.position.z = lastRackPosition.z; // Garde la position z identique
-    } else {
-        // Si l'objet est plus profond que large, place le clone sur l'axe z dans la direction opposée (sud)
-        clone.position.x = lastRackPosition.x; // Garde la position x identique
-        clone.position.z = lastRackPosition.z - offset * sizerack1.z;
-    }
-
-    // Ajouter le clone à la scène
-    scene.add(clone);
-    return clone;
-}
-
-lastRack = cloneAndPositionAvant(rackB2, rackB2.position, 2);
-
-function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction,name) {
-    const clone = rack.clone();
-    clone.name = name; // Attribuer un nom unique
-    clone.userData.price = 10; // Attribuer le prix dans les données utilisateur
-    // Positionner le clone perpendiculairement selon la direction choisie
-    switch (direction) {
-        case "est":
-            clone.position.x = lastRackPosition.x + offset * sizerack1.x;
-            clone.position.z = lastRackPosition.z; // Même position z
-            break;
-        
-        case "ouest":
-            clone.position.x = lastRackPosition.x - offset * sizerack1.x;
-            clone.position.z = lastRackPosition.z; // Même position z
-            break;
-        
-        case "nord":
-            clone.position.x = lastRackPosition.x; // Même position x
-            clone.position.z = lastRackPosition.z - offset * sizerack1.z;
-            break;
-        
-        case "sud":
-            clone.position.x = lastRackPosition.x; // Même position x
-            clone.position.z = lastRackPosition.z + offset * sizerack1.z;
-            break;
-        
-        default:
-            console.error("Direction non valide ! Utilisez 'est', 'ouest', 'nord' ou 'sud'.");
-            return null;
-    }
-
-    // Ajouter le clone à la scène
-    scene.add(clone);
-    racks.push(clone);
-    return clone;
-}
-lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 28,"sud","test1");
-lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3,"ouest","test2");
-
-for (let i = 0; i < 20; i++) {
-    lastRack = cloneAndPositionInDirection(lastRack, lastRack.position, offset,"sud",`rack_${i}`);
-     offset = 1;
- }
-
- window.addEventListener('contextmenu', onRightClick, false);
-
-        // shelving
-        shelving.traverse(mesh => {
-            if (mesh.material && mesh.material.name == 'Box') {
-                if (!boxMaterial) {
-                    boxMaterial = mesh.material;
+            // Assurez-vous que chaque partie du clone a son propre matériau
+            clone.traverse((child) => {
+                if (child.isMesh) {
+                    child.material = child.material.clone(); // Crée une copie unique du matériau
                 }
-                if (mesh.material != boxMaterial) {
-                    mesh.material.dispose();
-                    mesh.material = boxMaterial;
-                }
+            });
+
+            clone.userData.price = 10; // Attribuer le prix dans les données utilisateur
+
+            // Positionner le clone perpendiculairement selon la direction choisie
+            switch (direction) {
+                case "est":
+                    clone.position.x = lastRackPosition.x + offset * sizerack1.x;
+                    clone.position.z = lastRackPosition.z; // Même position z
+                    break;
+
+                case "ouest":
+                    clone.position.x = lastRackPosition.x - offset * sizerack1.x;
+                    clone.position.z = lastRackPosition.z; // Même position z
+                    break;
+
+                case "nord":
+                    clone.position.x = lastRackPosition.x; // Même position x
+                    clone.position.z = lastRackPosition.z - offset * sizerack1.z;
+                    break;
+
+                case "sud":
+                    clone.position.x = lastRackPosition.x; // Même position x
+                    clone.position.z = lastRackPosition.z + offset * sizerack1.z;
+                    break;
+
+                default:
+                    console.error("Direction non valide ! Utilisez 'est', 'ouest', 'nord' ou 'sud'.");
+                    return null;
             }
-        });
+
+            console.log('eto', clone);
+            const box0_1 = clone.getObjectByName('Box_33050');
+            const box0_2 = clone.getObjectByName('Box_33051');
+            const box0_3 = clone.getObjectByName('Box_33049');
+            const box1_1 = clone.getObjectByName('Box_33047');
+            const box1_2 = clone.getObjectByName('Box_33046');
+            const box1_3 = clone.getObjectByName('Box_33048');
+            console.log('box0_1', box0_1);
+
+            if (box0_1) box0_1.name = basename + getSerial() + 'E0C1';
+            if (box0_2) box0_2.name = basename + getSerial() + 'E0C2';
+            if (box0_3) box0_3.name = basename + getSerial() + 'E0C3';
+            if (box1_1) box1_1.name = basename + getSerial() + 'E1C1';
+            if (box1_2) box1_2.name = basename + getSerial() + 'E1C2';
+            if (box1_3) box1_3.name = basename + getSerial() + 'E1C3';
+
+            // Ajouter le clone à la scène
+            scene.add(clone);
+
+            // Ajouter les boîtes individuelles au tableau racks
+            racks.push(
+                ...(box1_1 ? [box1_1] : []),
+                ...(box1_2 ? [box1_2] : []),
+                ...(box1_3 ? [box1_3] : []),
+                ...(box0_1 ? [box0_1] : []),
+                ...(box0_2 ? [box0_2] : []),
+                ...(box0_3 ? [box0_3] : [])
+            );
+
+            return clone;
+        }
+
+        let offset = 1;
+        let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "INIT");
+
+        console.log("lasRack", lastRack);
+        for (let i = 0; i < 20; i++) {
+            lastRack = cloneAndPositionInDirection(rackB2, lastRack.position, offset, "sud", `FIRST`);
+            offset = 1;
+        }
+
+        console.log("racks", racks);
+        window.addEventListener('contextmenu', onRightClick, false);
+
 
         freeBoxMaterial = boxMaterial.clone();
         freeBoxMaterial.visible = false;
@@ -567,170 +409,44 @@ for (let i = 0; i < 20; i++) {
         //boxMaterial.transparent = true;
         //boxMaterial.opacity = 0.5;
         box.makeEmpty();
-        box.expandByObject(shelving);
+        //box.expandByObject(shelving);
         const center = box.getCenter(new Vector3());
         const size = box.getSize(new Vector3());
         //console.log( box, size, center );
         const ox = ((rightX - leftX) - size.x * 8) / 4.2;
         const cx = (leftX + rightX) / 2 - ox / 4.2;
-        let serial = 0;
-        const getSerial = () => (++serial).toString().padStart(4, '0');
-        const processShelving = (object, baseName) => {
-            const box1_1 = object.getObjectByName('Box_31');
-            const box1_2 = object.getObjectByName('Box_32');
-            const box1_3 = object.getObjectByName('Box_33');
-            const box2_1 = object.getObjectByName('Box_21');
-            const box2_2 = object.getObjectByName('Box_22');
-            const box2_3 = object.getObjectByName('Box_23');
-            const box3_1 = object.getObjectByName('Box_11');
-            const box3_2 = object.getObjectByName('Box_12');
-            const box3_3 = object.getObjectByName('Box_13');
-            const box4_1 = object.getObjectByName('Box_01');
-            const box4_2 = object.getObjectByName('Box_02');
-            const box4_3 = object.getObjectByName('Box_03');
-            box4_1.name = baseName + getSerial() + 'E0C1';
-            box4_2.name = baseName + getSerial() + 'E0C2';
-            box4_3.name = baseName + getSerial() + 'E0C3';
-            box3_1.name = baseName + getSerial() + 'E1C1';
-            box3_2.name = baseName + getSerial() + 'E1C2';
-            box3_3.name = baseName + getSerial() + 'E1C3';
-            box2_1.name = baseName + getSerial() + 'E2C1';
-            box2_2.name = baseName + getSerial() + 'E2C2';
-            box2_3.name = baseName + getSerial() + 'E2C3';
-            box1_1.name = baseName + getSerial() + 'E3C1';
-            box1_2.name = baseName + getSerial() + 'E3C2';
-            box1_3.name = baseName + getSerial() + 'E3C3';
-            boxes.push(
-                box4_1, box4_2, box4_3,
-                box3_1, box3_2, box3_3,
-                box2_1, box2_2, box2_3,
-                box1_1, box1_2, box1_3,
-            );
-            boxNames.push(
-                box4_1.name, box4_2.name, box4_3.name,
-                box3_1.name, box3_2.name, box3_3.name,
-                box2_1.name, box2_2.name, box2_3.name,
-                box1_1.name, box1_2.name, box1_3.name,
-            );
-        };
-        for (let i = 1; i < 17; i++) {
-            const c5 = shelving.clone();
-            processShelving(c5, 'A');
-            c5.position.set(leftX + size.x / 2, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c5);
-        }
-        for (let i = 1; i < 17; i++) {
-            const c4 = shelving.clone();
-            processShelving(c4, 'B');
-            c4.position.set(-(ox + size.x * 2) + size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c4);
-        }
-        for (let i = 1; i < 17; i++) {
-            const c3 = shelving.clone();
-            processShelving(c3, 'C');
-            c3.position.set(-(ox + size.x * 2) + size.x / 2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c3);
-        }
-        for (let i = 1; i < 17; i++) {
-            const c2 = shelving.clone();
-            processShelving(c2, 'D');
-            c2.position.set(size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c2);
-        }
-        for (let i = 1; i < 17; i++) {
-            const c1 = shelving.clone();
-            processShelving(c1, 'E');
-            c1.position.set(size.x / 2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c1);
-        }
-        for (let i = 1; i < 17; i++) {
-            const c6 = shelving.clone();
-            processShelving(c6, 'F');
-            c6.position.set((ox + size.x * 2) + size.x / -2 + cx, 0, backZ + size.z / 2 + (16 - i) * size.z);
-            //scene.add(c6);
-        }
-        for (let i = 1; i < 11; i++) {
-            const c7 = shelving.clone();
-            processShelving(c7, 'G');
-            c7.position.set((ox + size.x * 2) + size.x / 2 + cx, 0, backZ + size.z / 2 + (10 - i) * size.z);
-            //scene.add(c7);
-        }
-        for (let i = 3; i < 9; i++) {
-            const c8 = shelving.clone();
-            processShelving(c8, 'H');
-            c8.position.set(rightX - size.x / 2, 0, backZ + size.z / 2 + (10 - i) * size.z + (size.z / 3));
-            //scene.add(c8);
-        }
-        startDateInput.min =
-            endDateInput.min = dateToStr(new Date());
-        startDateInput.onchange = (event) => {
-            endDateInput.min = startDateInput.value;
-            const end = strToDate(endDateInput.value);
-            const endMin = strToDate(endDateInput.min);
-            if (end < endMin) {
-                endDateInput.value = endDateInput.min;
+
+
+    };
+
+    // Fonction pour gérer le clic droit
+    function onRightClick(event) {
+        event.preventDefault(); // Empêcher le menu contextuel par défaut
+
+        // Calculer la position de la souris
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // Effectuer le raycast uniquement sur les racks
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(racks); // Limite l'intersection aux racks
+
+        if (intersects.length > 0) {
+            const rack = intersects[0].object;
+
+            // Vérifier et modifier le statut du rack
+            if (rack.status === "selected") { // Utilisation de === pour vérifier l'état
+                rack.status = "deselected"; // Changement correct du statut
+                rack.material.color.set('green'); // Change la couleur en vert
+            } else {
+                rack.status = "selected"; // Changement correct du statut
+                rack.material.color.set('red'); // Change la couleur en rouge
             }
-            showFreeBoxes();
-        };
-        endDateInput.onchange = (event) => showFreeBoxes();
-        showFreeBoxes();
-    };
 
-    const showFreeBoxes = () => {
-        renderer.domElement.removeEventListener('pointerdown', pointerdown);
-        renderer.domElement.removeEventListener('pointerup', pointerup);
-        renderer.domElement.removeEventListener('pointermove', pointermove);
-        window.removeEventListener('blur', blur);
+            console.log("clicked", rack, "status:", rack.status);
+        }
+    }
 
-        selectedBoxNames.forEach(name => removeElement(name));
-        selectedBoxNames.length = 0;
-
-        startDateInput.disabled = endDateInput.disabled = true;
-
-        freeBoxes.length = 0;
-
-        orderList.style.pointerEvents = '';
-        orderList.hidden = true;
-
-        validateButton.onclick = null;
-
-        const start = dateToServerStr(strToDate(startDateInput.value));
-        const end = dateToServerStr(strToDate(endDateInput.value));
-
-        
-        fetch('{{ route('api.boxes.free') }}?start=' + start + '&finish=' + end)
-            .then(response => {
-                if (!response.ok) throw new Error('HTTPError, status = ' + response.status);
-                return response.json();
-            })
-            .then(array => {
-                const boxMap = new Map();
-                array.forEach(boxData => {
-                    boxMap.set(boxData.box_id, boxData.price);
-                });
-
-                boxes.forEach(box => {
-                    const boxId = boxNames[boxes.indexOf(box)];
-                    if (boxMap.has(boxId)) {
-                        dataByBoxName[boxId] = {
-                            price: boxMap.get(boxId)
-                        };
-                        box.material = freeBoxMaterial;
-                        freeBoxes.push(box);
-                    } else {
-                        box.material = boxMaterial;
-                    }
-                });
-
-                startDateInput.disabled = endDateInput.disabled = false;
-
-                renderer.domElement.addEventListener('pointerdown', pointerdown);
-                renderer.domElement.addEventListener('pointerup', pointerup);
-                renderer.domElement.addEventListener('pointermove', pointermove);
-                window.addEventListener('blur', blur);
-            })
-            .catch(error => console.error(error));
-    };
 
     let isSelecting = false;
     let selectionStartEvent = null;
@@ -810,125 +526,7 @@ for (let i = 0; i < 20; i++) {
         }
     };
 
-    const select = (name) => {
-        const freeBox = freeBoxes.find(box => box.name == name);
 
-        if (freeBox && !selectedBoxNames.includes(name)) {
-            selectedBoxNames.push(name);
-            addElement(name);
-
-            freeBox.material = freeBoxHighlightedMaterial;
-
-            orderList.hidden = false;
-
-            if (validateButton.onclick == null) {
-                validateButton.onclick = () => {
-                    let html = '',
-                        price = 0;
-
-                    document.querySelector('#data-form').style.opacity = '1';
-                    const oneDay = 24 * 60 * 60 * 1000,
-                        firstDate = new Date(startDateInput.value),
-                        secondDate = new Date(endDateInput.value),
-                        diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
-
-                    for (let i = 0; i < selectedBoxNames.length; i++) {
-                        const boxPrice = dataByBoxName[selectedBoxNames[i]].price;
-
-                        html += `
-                    <tr>
-                        <td>${selectedBoxNames[i]}</td>
-                        <td>${diffDays === 1 ? `${diffDays} jour` : `${diffDays} jours`}</td>
-                        <td>${boxPrice}€</td>
-                        <td>${diffDays * boxPrice}€</td>
-                    </tr>
-                `;
-                        price = price + diffDays * boxPrice;
-                    }
-
-                    const info_html = document.querySelector('#info'),
-                        price_html = document.querySelector('#price'),
-                        paletteCount_html = document.querySelector('#paletteCount'),
-                        dayCount_html = document.querySelector('#dayCount');
-
-                    info_html.innerHTML = html;
-                    price_html.innerHTML = price;
-                    paletteCount_html.innerHTML = selectedBoxNames.length;
-                    dayCount_html.innerHTML = diffDays;
-
-                    $.magnificPopup.open({
-                        items: {
-                            src: '#data-form'
-                        },
-                        type: 'inline',
-                        callbacks: {
-                            open: function() {
-                                $('#data-form').css({
-                                    'opacity': '1',
-                                    'max-height': 'unset'
-                                });
-                            },
-                            close: function() {
-                                $('#data-form').css({
-                                    'opacity': '0',
-                                    'max-height': '800px'
-                                });
-                            }
-                        }
-                    });
-                };
-
-                const form = document.querySelector('#data-form');
-
-                form.onsubmit = (event) => {
-                    event.preventDefault();
-
-                    const formData = new FormData();
-                    const category = document.querySelector('#category'),
-                        comment = document.querySelector('#comment'),
-                        first_name = document.querySelector('#first_name'),
-                        last_name = document.querySelector('#last_name'),
-                        email = document.querySelector('#email'),
-                        phone = document.querySelector('#phone');
-
-                    renderer.domElement.removeEventListener('pointerdown', pointerdown);
-                    orderList.style.pointerEvents = 'none';
-
-                    const start = dateToServerStr(strToDate(startDateInput.value)),
-                        end = dateToServerStr(strToDate(endDateInput.value)),
-                        names = selectedBoxNames.join(',');
-
-                    formData.append('box_id', names);
-                    formData.append('start', start);
-                    formData.append('finish', end);
-                    formData.append('category', category.value);
-                    formData.append('comment', comment.value);
-                    formData.append('first_name', first_name.value);
-                    formData.append('last_name', last_name.value);
-                    formData.append('email', email.value);
-                    formData.append('phone', phone.value);
-
-                    const options = {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        body: formData,
-                    };
-
-                    fetch("{{ route('api.boxes.data')}}", options).then(response => {
-                            if (!response.ok) {
-                                throw new Error('HTTPError, status = ' + response.status);
-                            }
-                            return response.text();
-                        })
-                        .then(data => $.magnificPopup.close())
-                        .catch(error => console.error('Sending failed:', error))
-                        .finally(() => showFreeBoxes());
-                };
-            }
-        }
-    };
 
     const deselect = (name, isPointerOver = false) => {
         const freeBox = freeBoxes.find(box => box.name == name);
@@ -993,7 +591,7 @@ for (let i = 0; i < 20; i++) {
                 if (selectedBoxNames.includes(name)) {
                     deselect(name, true);
                 } else {
-                    select(name);
+                    //select(name);
                 }
             }
         }
@@ -1098,8 +696,8 @@ for (let i = 0; i < 20; i++) {
         renderer.setPixelRatio(window.devicePixelRatio);
         domContainer.appendChild(renderer.domElement);
         camera = new PerspectiveCamera(45, 1.0, 1, 3000);
-		camera.position.set(150, 50, 0);
- 
+        camera.position.set(150, 50, 0);
+
         scene = new Scene();
 
         scene.add(camera);
@@ -1229,26 +827,5 @@ for (let i = 0; i < 20; i++) {
             childList: true
         });
     });
-
- // Fonction pour gérer le clic droit
-function onRightClick(event) {
-    event.preventDefault(); // Empêcher le menu contextuel par défaut
-
-    // Calculer la position de la souris
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Effectuer le raycast uniquement sur les racks
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(racks); // Limite l'intersection aux racks
-
-    if (intersects.length > 0) {
-        const rack = intersects[0].object;
-        //const price = rack.userData.price;
-
-        // Afficher les informations du rack cliqué
-        alert(`Nom: ${rack.name}, Prix: 10€`);
-    }
-}
 </script>
 @endsection
