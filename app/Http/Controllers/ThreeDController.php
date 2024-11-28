@@ -146,4 +146,15 @@ class ThreeDController extends Controller
                 ->subject($subject);
         });
     }
+
+    public function geReservedBoxes(Request $request)
+    {
+        try {
+            $boxesReserved = DB::table('reallogistic_reserve')->pluck('box_id')->toArray();
+            return response()->json($boxesReserved);
+        } catch (Exception $e) {
+            dd('erreur ', $e);
+            //return $e;
+        }
+    }
 }

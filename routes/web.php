@@ -23,3 +23,6 @@ Route::get('/test', function () {
     return view('3d.test');
 
 })->name('test');
+
+Route::get('getBoxesReserved', [ThreeDController::class, 'geReservedBoxes'])->name('getBoxesReserved');
+

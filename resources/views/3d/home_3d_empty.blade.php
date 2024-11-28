@@ -382,17 +382,17 @@
         }
 
         let offset = 1;
-        let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "INIT");
+        let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "I");
 
         console.log("lasRack", lastRack);
-        for (let i = 0; i < 20; i++) {
-            lastRack = cloneAndPositionInDirection(rackB2, lastRack.position, offset, "sud", `FIRST`);
+        for (let i = 0; i < 5; i++) {
+            lastRack = cloneAndPositionInDirection(rackB2, lastRack.position, offset, "sud", `A`);
             offset = 1;
         }
 
         console.log("racks", racks);
         window.addEventListener('contextmenu', onRightClick, false);
-
+        initAllBoxesBystatusApi();
 
         freeBoxMaterial = boxMaterial.clone();
         freeBoxMaterial.visible = false;
@@ -434,19 +434,52 @@
         if (intersects.length > 0) {
             const rack = intersects[0].object;
 
-            // Vérifier et modifier le statut du rack
-            if (rack.status === "selected") { // Utilisation de === pour vérifier l'état
-                rack.status = "deselected"; // Changement correct du statut
-                rack.material.color.set('green'); // Change la couleur en vert
-            } else {
-                rack.status = "selected"; // Changement correct du statut
-                rack.material.color.set('red'); // Change la couleur en rouge
-            }
+            rack.status = !rack.status;
+            initStatusBox(rack)
 
             console.log("clicked", rack, "status:", rack.status);
         }
     }
+    
+    const initAllBoxesBystatusApi = () => {
+    fetch('{{ route('getBoxesReserved') }}')
+    .then(response => {
+        if (!response.ok) throw new Error('HTTPError, status = ' + response.status);
+        return response.json();
+    })
+    .then(boxIds => {
+        racks.forEach(rack => {
+            if (boxIds.includes(rack.name)) {
+                // Action si rack.name est trouvé dans boxIds
+                rack.status = true;
+                console.log(`Rack trouvé :`, rack);
+            } else {
+                // Action si rack.name n'est pas trouvé dans boxIds
+                rack.status = false;
+                console.log(`Rack non trouvé, traitement par défaut :`, rack);
+            }
+            initStatusBox(rack);
+        });
 
+        // Résultat final après traitement
+        console.log('Racks après traitement :', racks);
+    }).catch(error => console.error(error));
+
+};
+
+    function initStatusBox(rack) {
+        // Vérifier et modifier le statut du rack
+        if (rack.status) { // Utilisation de === pour vérifier l'état
+            rack.material.visible = true; // Changement correct du statut
+            rack.material.color.set('red');
+            // Change la couleur en rouge
+
+        } else {
+            rack.material.visible = false;
+            rack.material.color.set('green'); // Change la couleur en vert
+
+        }
+    }
 
     let isSelecting = false;
     let selectionStartEvent = null;
