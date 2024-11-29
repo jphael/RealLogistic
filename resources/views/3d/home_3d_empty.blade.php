@@ -173,6 +173,8 @@
         Raycaster,
         Vector2,
         Vector3,
+        MeshBasicMaterial,
+        BoxGeometry
     } from 'three';
 
     import {
@@ -392,6 +394,8 @@
 
         console.log("racks", racks);
         window.addEventListener('contextmenu', onRightClick, false);
+        window.addEventListener('mousemove', onMouseMove, false);
+
         initAllBoxesBystatusApi();
 
         freeBoxMaterial = boxMaterial.clone();
@@ -417,69 +421,40 @@
         const cx = (leftX + rightX) / 2 - ox / 4.2;
 
 
+
     };
 
-    // Fonction pour gérer le clic droit
-    function onRightClick(event) {
-        event.preventDefault(); // Empêcher le menu contextuel par défaut
 
-        // Calculer la position de la souris
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        // Effectuer le raycast uniquement sur les racks
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(racks); // Limite l'intersection aux racks
-
-        if (intersects.length > 0) {
-            const rack = intersects[0].object;
-
-            rack.status = !rack.status;
-            initStatusBox(rack)
-
-            console.log("clicked", rack, "status:", rack.status);
-        }
-    }
-    
     const initAllBoxesBystatusApi = () => {
-    fetch('{{ route('getBoxesReserved') }}')
-    .then(response => {
-        if (!response.ok) throw new Error('HTTPError, status = ' + response.status);
-        return response.json();
-    })
-    .then(boxIds => {
-        racks.forEach(rack => {
-            if (boxIds.includes(rack.name)) {
-                // Action si rack.name est trouvé dans boxIds
-                rack.status = true;
-                console.log(`Rack trouvé :`, rack);
-            } else {
-                // Action si rack.name n'est pas trouvé dans boxIds
-                rack.status = false;
-                console.log(`Rack non trouvé, traitement par défaut :`, rack);
-            }
-            initStatusBox(rack);
-        });
+        fetch('{{ route('getBoxesReserved') }}')
+            .then(response => {
+                if (!response.ok) throw new Error('HTTPError, status = ' + response.status);
+                return response.json();
+            })
+            .then(boxIds => {
+                racks.forEach(rack => {
+                    if (boxIds.includes(rack.name)) {
+                        // Action si rack.name est trouvé dans boxIds
+                        //rack.isSelected = true;
+                        rack.isFree = false;
+                        rack.apiReserved = true;
+                        console.log(`Rack trouvé :`, rack);
+                    } else {
+                        // Action si rack.name n'est pas trouvé dans boxIds
 
-        // Résultat final après traitement
-        console.log('Racks après traitement :', racks);
-    }).catch(error => console.error(error));
+                        //rack.isSelected = false;
+                        rack.isFree = true;
+                        rack.apiReserved = false;
+                        console.log(`Rack non trouvé, traitement par défaut :`, rack);
+                    }
+                    initMaterialBoxReserved(rack);
+                });
 
-};
+                // Résultat final après traitement
+            }).catch(error => console.error(error));
 
-    function initStatusBox(rack) {
-        // Vérifier et modifier le statut du rack
-        if (rack.status) { // Utilisation de === pour vérifier l'état
-            rack.material.visible = true; // Changement correct du statut
-            rack.material.color.set('red');
-            // Change la couleur en rouge
+    };
 
-        } else {
-            rack.material.visible = false;
-            rack.material.color.set('green'); // Change la couleur en vert
-
-        }
-    }
 
     let isSelecting = false;
     let selectionStartEvent = null;
@@ -520,17 +495,7 @@
         }
     };
 
-    const pointermove = (event) => {
-        if (isSelecting && selectionStartEvent && event.pointerId === selectionStartEvent.pointerId) {
-            return;
-        }
-
-        clickCanceled = true;
-
-        if (!clickStarted) {
-            move(event);
-        }
-    };
+    
 
     const pointerup = (event) => {
         if (event != null) {
@@ -672,19 +637,11 @@
         }
 
         if (dispatchMove) {
-            onPointerMove(event);
+           // onPointerMove(event);
         }
     };
 
-    const onPointerMove = (event) => {
-
-
-        const rect = infoElement.getBoundingClientRect();
-
-        infoElement.style.left = Math.min(event.clientX, 1700) + 'px';
-        infoElement.style.top = (event.clientY - rect.height) + 'px';
-
-    };
+   
 
     const onRollOver = (name, data) => {
         // console.log( 'over:', name );
@@ -860,5 +817,113 @@
             childList: true
         });
     });
+
+    let isRightClickActive = false; // Indicateur temporaire pour bloquer onMouseMove
+let currentHoveredRack = null; // Dernier rack survolé
+
+function onMouseMove(event) {
+    if (isRightClickActive) return; // Bloquer les survols pendant un clic droit actif
+
+    // Calculer la position de la souris en coordonnées normalisées
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Effectuer un raycast
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(racks);
+
+    if (intersects.length > 0) {
+        const rack = intersects[0].object;
+
+        if (rack.apiReserved) return;
+        if (!rack.isFree) return; // Ignorer les racks réservés
+
+        // Si un nouveau rack est survolé
+        if (currentHoveredRack !== rack) {
+            // Réinitialiser l'apparence du rack précédent
+            if (currentHoveredRack) {
+                resetRackAppearance(currentHoveredRack);
+            }
+
+            // Mettre à jour le rack survolé
+            currentHoveredRack = rack;
+
+            // Afficher le carton pour le rack survolé
+            showRackCarton(rack);
+        }
+    } else {
+        // Si aucun rack n'est survolé, réinitialiser le rack précédent
+        if (currentHoveredRack) {
+            resetRackAppearance(currentHoveredRack);
+            currentHoveredRack = null; // Réinitialiser le suivi
+        }
+    }
+}
+
+function onRightClick(event) {
+    event.preventDefault(); // Empêcher le menu contextuel par défaut
+
+    // Calculer la position de la souris en coordonnées normalisées
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Effectuer un raycast
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(racks);
+
+    if (intersects.length > 0) {
+        const rack = intersects[0].object;
+
+        if (rack.apiReserved) return;
+        // Basculer le statut de réservation
+        rack.isFree = !rack.isFree; // Inverse le statut libre/réservé
+        //rack.isSelected = !rack.isSelected; // Mettre à jour le statut visuel
+
+        // Forcer la mise à jour visuelle
+        initStatusBox(rack);
+
+        // Bloquer temporairement onMouseMove
+        isRightClickActive = true;
+        setTimeout(() => (isRightClickActive = false), 200);
+
+        console.log("Clic droit sur le rack :", rack.name, "isFree:", rack.isFree);
+    }
+}
+
+function initStatusBox(rack) {
+    // Modifier l'apparence du rack en fonction de son statut
+    if (!rack.isFree) {
+        rack.material.visible = true;
+
+        rack.material.color.set('green'); // Rouge pour réservé
+
+    } else {
+        rack.material.visible = false;
+    }
+}
+
+function initMaterialBoxReserved(rack) {
+    // Modifier l'apparence du rack en fonction de son statut reservé
+    if (rack.apiReserved) {
+        rack.material.visible = true;
+
+        rack.material.color.set('red'); // Rouge pour réservé
+
+    } else {
+        rack.material.visible = false;
+    }
+}
+
+function resetRackAppearance(rack) {
+    if (rack.isFree) {
+        rack.material.visible = false; // Masquer le rack
+    }
+}
+
+function showRackCarton(rack) {
+    rack.material.visible = true; // Afficher le carton
+    rack.material.color.set('orange'); // Orange pour indiquer la possibilité de poser un carton
+}
+
 </script>
 @endsection
