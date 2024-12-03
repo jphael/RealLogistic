@@ -1,7 +1,10 @@
 @extends('layouts.app')
 @section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.2.0/magnific-popup.css" integrity="sha512-UhvuUthI9VM4N3ZJ5o1lZgj2zNtANzr3zyucuZZDy67BO6Ep5+rJN2PST7kPj+fOI7M/7wVeYaSaaAICmIQ4sQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.2.0/jquery.magnific-popup.js" integrity="sha512-tOyzsVuGuz0il5EcXFi/qA5DI4BNLna4gHbWn+HbQBP0jmRhyqMKup24fzyKnxSX0jBxt2+qStqwwHDIh5TaGA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+
 <style>
     html,
     body {
@@ -49,7 +52,7 @@
 
     #orderList {
         word-wrap: break-word;
-        max-width: 300px;
+
         align-items: center;
         display: flex;
         flex-direction: column;
@@ -59,18 +62,7 @@
         font-weight: bold;
     }
 
-    #data-form {
-        z-index: 3;
-        max-width: 600px;
-        max-height: 800px;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        background-color: #ffffff;
-        opacity: 0;
-    }
+
 
     .mfp-hide {
         display: block !important;
@@ -127,19 +119,32 @@
     <div id="ui" class="container mt-5 no-select">
         <div class="form-group">
             <label for="startDate">Date Entrée:</label>
-            <input id="startDate" type="date" class="form-control no-select">
+            <div class="input-group">
+                <input id="startDate" type="text" class="form-control no-select" placeholder="Sélectionnez une date">
+                <span class="input-group-text">
+                    <i class="bi bi-calendar"></i> <!-- Icône Bootstrap Icons -->
+                </span>
+            </div>
         </div>
+
         <div class="form-group">
             <label for="endDate">Date Sortie:</label>
-            <input id="endDate" type="date" class="form-control no-select">
+            <div class="input-group">
+                <input id="endDate" type="text" class="form-control no-select" placeholder="Sélectionnez une date">
+                <span class="input-group-text">
+                    <i class="bi bi-calendar"></i>
+                </span>
+            </div>
         </div>
-        <table class="table table-responsive" id="orderList" hidden>
+        <table class="table table-responsive" id="orderList">
             <tbody id="tableorderList" class="no-select">
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="2">
-                        <button id="validateButton" class="btn" style="padding: 10px;background-color: #1d9236dc;font-family: 'Open Sans', sans-serif !important;color:#fff;" onclick="return false;">Valider</button>
+                        <button id="open-popup" class="btn btn-primary">
+                            Valider
+                        </button>
                     </td>
                 </tr>
             </tfoot>
@@ -148,7 +153,102 @@
 
     <div id="tooltip"></div>
 </div>
+<!-- Modal -->
+<div id="form-popup" class="modal fade" tabindex="-1" aria-labelledby="form-popup-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="form-popup-label">Formulaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Your Form -->
+                <form id="data-form">
+                    <p>Dimensions maximales pour une palette (L x R x H) 50cm x 50cm x 50cm</p>
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <h3 class="mb-0 text-center" style="font-size: 1.50rem; color: white; background: #05364d;">
+                                    Palette(s) sélectionnée(s)
+                                </h3>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre de palettes</th>
+                                                <th>Nombre de jours</th>
+                                                <th>Prix total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tbody id="infoHead">
 
+                                        </tbody>
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Palette</th>
+                                                                <th>Durée</th>
+                                                                <th>Prix/Jour</th>
+                                                                <th>Total</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="info">
+                                                            <!-- Rows will be added dynamically by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Catégorie</label>
+                                <input type="text" id="category" class="form-control" placeholder="Catégorie">
+                            </div>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Document</label>
+                                <input type="file" id="file" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Remarque</label>
+                                <textarea id="comment" class="form-control" placeholder="Votre remarque" style="height: 100px; resize: none;"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label required">Prénom</label>
+                                <input type="text" id="first_name" class="form-control" value="{{ Auth::user()->prenom ?? '' }}" placeholder="Saisissez votre Prénom" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label required">Nom de famille</label>
+                                <input type="text" id="last_name" class="form-control" value="{{ Auth::user()->nom ?? '' }}" placeholder="Saisissez votre nom de famille" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label required">E-mail</label>
+                                <input type="email" id="email" class="form-control" value="{{ Auth::user()->email ?? '' }}" placeholder="Saisissez votre e-mail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label required">Numéro de téléphone</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="Saisissez votre numéro de téléphone" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.min.js" defer></script>
 <script type="importmap" defer>
@@ -198,7 +298,6 @@
 
     const orderList = document.querySelector('#orderList');
     const tableorderList = document.querySelector('#tableorderList');
-    const validateButton = document.querySelector('#validateButton');
 
     const mouse = new Vector2();
 
@@ -208,9 +307,7 @@
     const boxNames = [];
     const dataByBoxName = {};
     const selectedBoxNames = [];
-    const freeBoxes = [];
     const walls = [];
-    const infoElement = document.querySelector('#tooltip');
     const domContainer = document.querySelector('#view3d');
     const startDateInput = document.querySelector('#startDate');
     const endDateInput = document.querySelector('#endDate');
@@ -358,15 +455,16 @@
             const box1_1 = clone.getObjectByName('Box_33047');
             const box1_2 = clone.getObjectByName('Box_33046');
             const box1_3 = clone.getObjectByName('Box_33048');
+            
+
+            if (box0_1) initBoxe(basename,box0_1,getSerial(),'E0C1');
+            if (box0_2) initBoxe(basename,box0_2,getSerial(),'E0C2');
+            if (box0_3) initBoxe(basename,box0_3,getSerial(),'E0C3');
+            if (box1_1) initBoxe(basename,box1_1,getSerial(),'E1C1');
+            if (box1_2) initBoxe(basename,box1_2,getSerial(),'E1C2');
+            if (box1_3) initBoxe(basename,box1_3,getSerial(),'E1C3');
+
             console.log('box0_1', box0_1);
-
-            if (box0_1) box0_1.name = basename + getSerial() + 'E0C1';
-            if (box0_2) box0_2.name = basename + getSerial() + 'E0C2';
-            if (box0_3) box0_3.name = basename + getSerial() + 'E0C3';
-            if (box1_1) box1_1.name = basename + getSerial() + 'E1C1';
-            if (box1_2) box1_2.name = basename + getSerial() + 'E1C2';
-            if (box1_3) box1_3.name = basename + getSerial() + 'E1C3';
-
             // Ajouter le clone à la scène
             scene.add(clone);
 
@@ -393,7 +491,8 @@
         }
 
         console.log("racks", racks);
-        window.addEventListener('contextmenu', onRightClick, false);
+        //window.addEventListener('contextmenu', onRightClick, false);
+        window.addEventListener('click', onRightClick, false);
         window.addEventListener('mousemove', onMouseMove, false);
 
         initAllBoxesBystatusApi();
@@ -424,6 +523,12 @@
 
     };
 
+
+    function initBoxe(basename,box,serial,boxPosition)
+    {
+        box.name = basename + serial + boxPosition;
+        box.boxPrice = 5;
+    }
 
     const initAllBoxesBystatusApi = () => {
         fetch('{{ route('getBoxesReserved') }}')
@@ -460,220 +565,6 @@
     let selectionStartEvent = null;
     let initialPointerPosition = null;
     const CLICK_THRESHOLD = 5;
-
-    const pointerdown = (event) => {
-
-
-        if (!event.isPrimary) {
-            return;
-        }
-
-        if (event.pointerType === 'mouse' && event.button !== 0) {
-            return;
-        }
-
-        clickCanceled = false;
-        clickStarted = true;
-        isSelecting = true;
-        selectionStartEvent = event;
-        initialPointerPosition = {
-            x: event.clientX,
-            y: event.clientY
-        };
-
-        move(event);
-
-        const pointerBox = freeBoxes.find(box => box.name == rollOverName);
-
-        if (pointerBox) {
-            rollOverName = pointerBox.name;
-
-            if (!selectedBoxNames.includes(rollOverName))
-                pointerBox.material = freeBoxOverMaterial;
-        } else {
-            console.log('PointerBox not found');
-        }
-    };
-
-    
-
-    const pointerup = (event) => {
-        if (event != null) {
-            if (!event.isPrimary || (event.button !== 0 && event.pointerType === 'mouse')) {
-                return;
-            }
-        }
-
-        move(null);
-
-        if (clickStarted) {
-            clickStarted = false;
-            isSelecting = false;
-            selectionStartEvent = null;
-
-            if (!clickCanceled) {
-                const distanceMoved = Math.sqrt(
-                    Math.pow(event.clientX - initialPointerPosition.x, 2) +
-                    Math.pow(event.clientY - initialPointerPosition.y, 2)
-                );
-
-                if (distanceMoved <= CLICK_THRESHOLD) {
-                    click(event);
-                }
-            }
-        }
-    };
-
-
-
-    const deselect = (name, isPointerOver = false) => {
-        const freeBox = freeBoxes.find(box => box.name == name);
-
-        if (freeBox) {
-            const index = selectedBoxNames.indexOf(name);
-
-            if (index !== -1) {
-                selectedBoxNames.splice(index, 1);
-                removeElement(name);
-
-
-                freeBox.material = freeBoxMaterial;
-
-
-                if (selectedBoxNames.length == 0) {
-                    orderList.hidden = true;
-                    validateButton.onclick = null;
-                }
-            }
-        }
-    };
-
-    const addElement = (name) => {
-        let element = document.querySelector(`[data-name="${name}"]`);
-
-        if (element == null) {
-            const rowHtml = `
-            <tr class="box" data-name="${name}">
-                <td>${name}</td>
-                <td><button class="btn-danger btn-sm padding-sm"><i class="fas fa-trash" aria-hidden="true"></i></button></td>
-            </tr>
-        `;
-            tableorderList.insertAdjacentHTML('afterbegin', rowHtml);
-
-            element = document.querySelector(`[data-name="${name}"]`);
-            element.querySelector('button').onclick = () => deselect(name);
-        }
-    };
-
-    const removeElement = (name) => {
-        const element = document.querySelector(`[data-name="${name}"]`);
-
-        if (element) {
-            element.remove();
-        }
-    };
-
-    const click = (event) => {
-        const rect = renderer.domElement.getBoundingClientRect();
-
-        ray.set(((event.clientX - rect.x) / rect.width) * 2 - 1, -((event.clientY - rect.y) / rect.height) * 2 + 1);
-        raycaster.setFromCamera(ray, camera);
-
-        const intersection = raycaster.intersectObjects(freeBoxes, false)[0];
-
-        if (intersection) {
-            const name = intersection.object.name;
-            const freeBox = freeBoxes.find(box => box.name == name);
-
-            if (freeBox) {
-                if (selectedBoxNames.includes(name)) {
-                    deselect(name, true);
-                } else {
-                    //select(name);
-                }
-            }
-        }
-    };
-
-
-    const move = (event) => {
-        let dispatchRollOut = true;
-        let dispatchMove = false;
-
-        if (event instanceof PointerEvent) {
-            const rect = renderer.domElement.getBoundingClientRect();
-
-            const x = ((event.clientX - rect.x) / rect.width) * 2 - 1;
-            const y = -((event.clientY - rect.y) / rect.height) * 2 + 1;
-
-            ray.set(x, y);
-            raycaster.setFromCamera(ray, camera);
-
-            const intersections = raycaster.intersectObjects(freeBoxes, false);
-
-            if (intersections.length > 0) {
-                const name = intersections[0].object.name;
-
-                if (name !== rollOverName) {
-                    if (boxNames.includes(rollOverName)) {
-                        onRollOut(rollOverName);
-                    }
-
-                    rollOverName = name;
-                    onRollOver(rollOverName, dataByBoxName[rollOverName]);
-                }
-
-                dispatchRollOut = false;
-            }
-
-            dispatchMove = true;
-        }
-
-        if (dispatchRollOut) {
-            if (boxNames.includes(rollOverName)) {
-                onRollOut(rollOverName);
-                rollOverName = null;
-            }
-        }
-
-        if (dispatchMove) {
-           // onPointerMove(event);
-        }
-    };
-
-   
-
-    const onRollOver = (name, data) => {
-        // console.log( 'over:', name );
-
-        const freeBox = freeBoxes.find(box => box.name == name);
-
-        if (freeBox && !selectedBoxNames.includes(name)) {
-            freeBox.material = freeBoxOverMaterial;
-        }
-
-        clearInterval(infoIntervalID);
-
-        infoElement.innerHTML = '<b>' + name + '</b><br />Prix : ' + data.price + ' €';
-        infoIntervalID = setTimeout(() => {
-            infoElement.style.opacity = 1.0;
-
-        }, 500);
-    };
-
-    const onRollOut = (name) => {
-        // console.log( 'out:', name );
-
-        const freeBox = freeBoxes.find(box => box.name == name);
-
-        if (freeBox && !selectedBoxNames.includes(name)) {
-            freeBox.material = freeBoxMaterial;
-        }
-
-        infoElement.style.opacity = 0.0;
-
-        clearInterval(infoIntervalID);
-    };
 
 
 
@@ -755,8 +646,19 @@
         startDateInput.value =
             endDateInput.value = dateToStr(day);
 
-        startDateInput.disabled =
-            endDateInput.disabled = true;
+        //startDateInput.disabled =endDateInput.disabled = true;
+        startDateInput.min =
+            endDateInput.min = dateToStr(new Date());
+        startDateInput.onchange = (event) => {
+            endDateInput.min = startDateInput.value;
+            const end = strToDate(endDateInput.value);
+            const endMin = strToDate(endDateInput.min);
+            if (end < endMin) {
+                endDateInput.value = endDateInput.min;
+            }
+            initAllBoxesBystatusApi();
+        };
+        endDateInput.onchange = (event) => initAllBoxesBystatusApi();
     };
 
     const render = (timeStamp = null) => {
@@ -802,7 +704,7 @@
 
         function updateButtonVisibility() {
             if (tableBody.children.length === 0) {
-                validateButton.style.display = 'none';
+                //validateButton.style.display = 'none';
             } else {
                 validateButton.style.display = 'block';
             }
@@ -819,111 +721,217 @@
     });
 
     let isRightClickActive = false; // Indicateur temporaire pour bloquer onMouseMove
-let currentHoveredRack = null; // Dernier rack survolé
+    let currentHoveredRack = null; // Dernier rack survolé
 
-function onMouseMove(event) {
-    if (isRightClickActive) return; // Bloquer les survols pendant un clic droit actif
+    function onMouseMove(event) {
+        if (isRightClickActive) return; // Bloquer les survols pendant un clic droit actif
 
-    // Calculer la position de la souris en coordonnées normalisées
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        // Calculer la position de la souris en coordonnées normalisées
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Effectuer un raycast
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(racks);
+        // Effectuer un raycast
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(racks);
 
-    if (intersects.length > 0) {
-        const rack = intersects[0].object;
+        if (intersects.length > 0) {
+            const rack = intersects[0].object;
 
-        if (rack.apiReserved) return;
-        if (!rack.isFree) return; // Ignorer les racks réservés
+            if (rack.apiReserved) return;
+            if (!rack.isFree) return; // Ignorer les racks réservés
 
-        // Si un nouveau rack est survolé
-        if (currentHoveredRack !== rack) {
-            // Réinitialiser l'apparence du rack précédent
+            // Si un nouveau rack est survolé
+            if (currentHoveredRack !== rack) {
+                // Réinitialiser l'apparence du rack précédent
+                if (currentHoveredRack) {
+                    resetRackAppearance(currentHoveredRack);
+                }
+
+                // Mettre à jour le rack survolé
+                currentHoveredRack = rack;
+
+                // Afficher le carton pour le rack survolé
+                showRackCarton(rack);
+            }
+        } else {
+            // Si aucun rack n'est survolé, réinitialiser le rack précédent
             if (currentHoveredRack) {
                 resetRackAppearance(currentHoveredRack);
+                currentHoveredRack = null; // Réinitialiser le suivi
             }
-
-            // Mettre à jour le rack survolé
-            currentHoveredRack = rack;
-
-            // Afficher le carton pour le rack survolé
-            showRackCarton(rack);
-        }
-    } else {
-        // Si aucun rack n'est survolé, réinitialiser le rack précédent
-        if (currentHoveredRack) {
-            resetRackAppearance(currentHoveredRack);
-            currentHoveredRack = null; // Réinitialiser le suivi
         }
     }
-}
 
-function onRightClick(event) {
-    event.preventDefault(); // Empêcher le menu contextuel par défaut
+    function onRightClick(event) {
+        event.preventDefault(); // Empêcher le menu contextuel par défaut
 
-    // Calculer la position de la souris en coordonnées normalisées
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        // Calculer la position de la souris en coordonnées normalisées
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Effectuer un raycast
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(racks);
+        // Effectuer un raycast
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(racks);
 
-    if (intersects.length > 0) {
-        const rack = intersects[0].object;
+        if (intersects.length > 0) {
+            const rack = intersects[0].object;
 
-        if (rack.apiReserved) return;
-        // Basculer le statut de réservation
-        rack.isFree = !rack.isFree; // Inverse le statut libre/réservé
-        //rack.isSelected = !rack.isSelected; // Mettre à jour le statut visuel
+            if (rack.apiReserved) return;
+            const boxName = rack.name;
+            // Vérifiez si l'élément existe déjà dans le tableau
+            const index = selectedBoxNames.indexOf(boxName);
+            if (index === -1) {
+                // Si le nom n'est pas dans le tableau, on l'ajoute
+                selectedBoxNames.push(boxName);
+            } else {
+                // Si le nom est déjà dans le tableau, on le supprime
+                selectedBoxNames.splice(index, 1);
+            }
+            // Basculer le statut de réservation
+            rack.isFree = !rack.isFree; // Inverse le statut libre/réservé
+            //rack.isSelected = !rack.isSelected; // Mettre à jour le statut visuel
 
-        // Forcer la mise à jour visuelle
-        initStatusBox(rack);
+            // Forcer la mise à jour visuelle
+            initStatusBox(rack);
 
-        // Bloquer temporairement onMouseMove
-        isRightClickActive = true;
-        setTimeout(() => (isRightClickActive = false), 200);
+            // Bloquer temporairement onMouseMove
+            isRightClickActive = true;
+            setTimeout(() => (isRightClickActive = false), 200);
 
-        console.log("Clic droit sur le rack :", rack.name, "isFree:", rack.isFree);
+            console.log("Clic droit sur le rack :", rack.name, "isFree:", rack.isFree, selectedBoxNames);
+        }
     }
-}
 
-function initStatusBox(rack) {
-    // Modifier l'apparence du rack en fonction de son statut
-    if (!rack.isFree) {
-        rack.material.visible = true;
+    function initStatusBox(rack) {
+        // Modifier l'apparence du rack en fonction de son statut
+        if (!rack.isFree) {
+            rack.material.visible = true;
 
-        rack.material.color.set('green'); // Rouge pour réservé
+            rack.material.color.set('green'); // Rouge pour réservé
 
-    } else {
-        rack.material.visible = false;
+        } else {
+            rack.material.visible = false;
+        }
     }
-}
 
-function initMaterialBoxReserved(rack) {
-    // Modifier l'apparence du rack en fonction de son statut reservé
-    if (rack.apiReserved) {
-        rack.material.visible = true;
+    function initMaterialBoxReserved(rack) {
+        // Modifier l'apparence du rack en fonction de son statut reservé
+        if (rack.apiReserved) {
+            rack.material.visible = true;
 
-        rack.material.color.set('red'); // Rouge pour réservé
+            rack.material.color.set('red'); // Rouge pour réservé
 
-    } else {
-        rack.material.visible = false;
+        } else {
+            rack.material.visible = false;
+        }
     }
-}
 
-function resetRackAppearance(rack) {
-    if (rack.isFree) {
-        rack.material.visible = false; // Masquer le rack
+    function resetRackAppearance(rack) {
+        if (rack.isFree) {
+            rack.material.visible = false; // Masquer le rack
+        }
     }
-}
 
-function showRackCarton(rack) {
-    rack.material.visible = true; // Afficher le carton
-    rack.material.color.set('orange'); // Orange pour indiquer la possibilité de poser un carton
-}
+    function showRackCarton(rack) {
+        rack.material.visible = true; // Afficher le carton
+        rack.material.color.set('orange'); // Orange pour indiquer la possibilité de poser un carton
+    }
 
+    function updateTable() {
+        const tbody = $('#info'); // Sélectionne le <tbody> du tableau
+        tbody.empty(); // Vide le contenu existant
+
+
+        const days = calculateDays();
+        if (days !== null) {
+            console.log(`Nombre de jours : ${days}`);
+            // Vous pouvez effectuer d'autres actions ici
+        }
+        let totalPrice = 0;
+        // Parcourt le tableau selectedBoxNames pour générer les lignes
+        selectedBoxNames.forEach((name, index) => {
+            const foundRack = racks.find(rack => rack.name === name);
+            let priceItem = 0;
+            if (foundRack) {
+                console.log(`rack trouvé`,foundRack);
+                priceItem = foundRack.boxPrice;
+            }
+            totalPrice +=  (days * priceItem);
+            const row = `
+            <tr>
+                <td>${name}</td>
+                <td>${days}</td>
+                <td>${priceItem}€</td>
+                <td>${days * priceItem}€</td>
+            </tr>
+        `;
+            tbody.append(row); // Ajoute chaque ligne au tableau
+        });
+
+        const tbodyHead = $('#infoHead'); // Sélectionne le <tbody> du tableau
+        tbodyHead.empty(); // Vide le contenu existant
+
+        // Parcourt le tableau selectedBoxNames pour générer les lignes
+        const rowHead = `
+            <tr>
+                <td>${selectedBoxNames.length}</td>
+                <td>${days} jour(s)</td>
+                <td>${totalPrice}€</td>
+            </tr>
+        `;
+        tbodyHead.append(rowHead);
+    }
+
+    $('#open-popup').on('click', function(event) {
+        if (selectedBoxNames.length === 0) {
+            event.preventDefault(); // Empêche le comportement par défaut du bouton
+            alert('Veuillez sélectionner au moins une palette avant de valider.');
+        } else {
+            // Affiche le popup en ajoutant dynamiquement les attributs Bootstrap
+            updateTable();
+            const modal = new bootstrap.Modal(document.getElementById('form-popup'));
+            modal.show();
+        }
+    });
+
+    $(document).ready(function() {
+        // Active le datepicker
+        $('#startDate, #endDate').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            orientation: 'bottom',
+        });
+
+        // Permet l'ouverture via clic sur l'icône
+        $('.input-group-text').on('click', function() {
+            $(this).siblings('input').datepicker('show');
+        });
+    });
+
+    function calculateDays() {
+        const startDate = $('#startDate').datepicker('getDate'); // Récupère la date entrée
+        const endDate = $('#endDate').datepicker('getDate'); // Récupère la date sortie
+
+        if (!startDate || !endDate) {
+            alert('Veuillez sélectionner les deux dates.');
+            return;
+        }
+
+        // Vérifie que endDate >= startDate
+        if (endDate < startDate) {
+            alert('La date de sortie doit être supérieure ou égale à la date d\'entrée.');
+            return;
+        }
+
+        // Calcule la différence en millisecondes
+        const timeDifference = endDate - startDate;
+
+        // Convertit en jours (ajouter 1 jour si les dates sont identiques)
+        const days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) + 1;
+
+        return days;
+    }
 </script>
+
 @endsection
