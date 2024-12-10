@@ -4,7 +4,8 @@ use App\Http\Controllers\ThreeDController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('3d.home_3d_empty');
+    return view('3d.rl_3d');
+    //return view('3d.home_3d_empty');
     //return view('welcome');
 });
 Route::get('/logistics', function () {
@@ -18,6 +19,7 @@ Route::get('/empty', function () {
 
 Route::get('/api/boxes/free', [ThreeDController::class, 'getFreeBoxes'])->name('api.boxes.free');
 Route::post('api/boxes/data', [ThreeDController::class, 'reserveBoxesWithData'])->name('api.boxes.data');
+Route::post('/reserveBoxesRL', [ThreeDController::class, 'reserveBoxesRL'])->name('reserveBoxesRL');
 
 Route::get('/test', function () {
     return view('3d.test');

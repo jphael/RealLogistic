@@ -318,60 +318,104 @@
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
     loader.setDRACOLoader(dracoLoader);
     const dataList = [{
-            name: 'Back',
-            url: '3drl/Back.glb'
+            name: 'A1',
+            url: '3dLast/A1.glb'
         },
         {
-            name: 'Bureaux',
-            url: '3drl/Bureaux.glb'
+            name: 'A3',
+            url: '3dLast/A3.glb'
         },
         {
-            name: 'Floor',
-            url: '3drl/Floor.glb'
+            name: 'A4',
+            url: '3dLast/A4.glb'
         },
         {
-            name: 'front',
-            url: '3drl/Front.glb'
+            name: 'B2',
+            url: '3dLast/B2.glb'
         },
         {
-            name: 'left',
-            url: '3drl/Left.glb'
+            name: 'B6',
+            url: '3dLast/B6.glb'
         },
         {
-            name: 'right',
-            url: '3drl/Right.glb'
+            name: 'B12',
+            url: '3dLast/B12.glb'
         },
         {
-            name: 'rackA1',
-            url: '3drl/rackA1maj.glb'
+            name: 'B13',
+            url: '3dLast/B13.glb'
         },
         {
-            name: 'rackA3',
-            url: '3drl/rackA3maj.glb'
+            name: 'C6',
+            url: '3dLast/C6.glb'
         },
         {
-            name: 'rackA4',
-            url: '3drl/Rack A4.glb'
+            name: 'D15',
+            url: '3dLast/D15.glb'
         },
         {
-            name: 'rackB2',
-            url: '3drl/Rack B2.glb'
+            name: 'D17',
+            url: '3dLast/D17.glb'
         },
         {
-            name: 'rackB6',
-            url: '3drl/Rack B6.glb'
+            name: 'D18',
+            url: '3dLast/D18.glb'
         },
         {
-            name: 'rackB12',
-            url: '3drl/Rack B12.glb'
+            name: 'D19',
+            url: '3dLast/D19.glb'
         },
         {
-            name: 'rackB13',
-            url: '3drl/Rack B13.glb'
+            name: 'D20',
+            url: '3dLast/D20.glb'
+        },
+        {
+            name: 'E2',
+            url: '3dLast/E2.glb'
+        },
+        {
+            name: 'E4',
+            url: '3dLast/E4.glb'
+        },
+        {
+            name: 'E15',
+            url: '3dLast/E15.glb'
+        },
+        {
+            name: 'G6',
+            url: '3dLast/G6.glb'
         },
         {
             name: 'G8',
-            url: '3drl/G8.glb'
+            url: '3dLast/G8.glb'
+        },
+        {
+            name: 'G14',
+            url: '3dLast/G14.glb'
+        },
+        {
+            name: 'H12',
+            url: '3dLast/H12.glb'
+        },
+        {
+            name: 'J12',
+            url: '3dLast/J12.glb'
+        },
+        {
+            name: 'BACK',
+            url: '3dLast/BACK.glb'
+        },
+        {
+            name: 'FRONT',
+            url: '3dLast/FRONT.glb'
+        },
+        {
+            name: 'LEFT',
+            url: '3dLast/LEFT.glb'
+        },
+        {
+            name: 'RIGHT',
+            url: '3dLast/RIGHT.glb'
         }
 
     ];
@@ -384,26 +428,42 @@
 
 
     const onAllLoad = () => {
-        const Bureaux = getDataByName('Bureaux').gltf.scene;
-        const floor = getDataByName('Floor').gltf.scene;
-        const front = getDataByName('front').gltf.scene;
-        // back = getDataByName('back').gltf.scene;
-        const left = getDataByName('left').gltf.scene;
-        const right = getDataByName('right').gltf.scene;
-        const Back = getDataByName('Back').gltf.scene;
-        const rackA1 = getDataByName('rackA1').gltf.scene;
-        const rackA3 = getDataByName('rackA3').gltf.scene;
-        const rackA4 = getDataByName('rackA4').gltf.scene;
-        const rackB2 = getDataByName('rackB2').gltf.scene;
-        const rackB6 = getDataByName('rackB6').gltf.scene;
-        const rackB12 = getDataByName('rackB12').gltf.scene;
-        const rackB13 = getDataByName('rackB13').gltf.scene;
-        const g8 = getDataByName('G8').gltf.scene;
+        //const floor = getDataByName('Floor').gltf.scene;
+        const front = getDataByName('FRONT').gltf.scene;
+        const rackA1 = getDataByName('A1').gltf.scene;
+        
+        const rackA3 = getDataByName('A3').gltf.scene;
+        const rackA4 = getDataByName('A4').gltf.scene;
+        const left = getDataByName('LEFT').gltf.scene;
+        const right = getDataByName('RIGHT').gltf.scene;
+        const Back = getDataByName('BACK').gltf.scene;
+        const rackB2 = getDataByName('B2').gltf.scene;
+
+        const rackB6 = getDataByName('B6').gltf.scene;
+        const rackB12 = getDataByName('B12').gltf.scene;
+        const rackB13 = getDataByName('B13').gltf.scene;
+        const rackC6 = getDataByName('C6').gltf.scene;
+        const rackD15 = getDataByName('D15').gltf.scene;
+        const rackD17 = getDataByName('D17').gltf.scene;
+        const rackD18 = getDataByName('D18').gltf.scene;
+        const rackD19 = getDataByName('D19').gltf.scene;
+        const rackD20 = getDataByName('D20').gltf.scene;
+        const rackE2 = getDataByName('E2').gltf.scene;
+        const rackE4 = getDataByName('E4').gltf.scene;
+        const rackE15 = getDataByName('E15').gltf.scene;
+        const rackG6 = getDataByName('G6').gltf.scene;
+        const rackG8 = getDataByName('G8').gltf.scene;
+        const rackG14 = getDataByName('G14').gltf.scene;
+        const rackH12 = getDataByName('H12').gltf.scene;
+        const rackJ12 = getDataByName('J12').gltf.scene;
+
+        /*
+        const g8 = getDataByName('G8').gltf.scene;*/
 
         const box = new Box3();
         let backZ, leftX, rightX;
-        //walls.push(back, left, right /*, room*/ );
-        scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3, rackB2, rackB6, rackB12, rackB13,g8);
+        scene.add(front,rackA1, rackA3,rackA4, left,right,Back, rackB2,rackB6,rackB12,rackB13,rackC6,rackD15,rackD17,rackD18,rackD19,rackD20,
+        rackE2,rackE4,rackE15,rackG6,rackG8,rackG14,rackH12,rackJ12);
         //scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3);
 
         const boundingBox = new Box3().setFromObject(rackA1);
@@ -488,13 +548,13 @@
         }
 
         let offset = 1;
-        let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "I");
+        /*let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "I");
 
         console.log("lasRack", lastRack);
         for (let i = 0; i < 5; i++) {
             lastRack = cloneAndPositionInDirection(rackB2, lastRack.position, offset, "sud", `A`);
             offset = 1;
-        }
+        }*/
 
         console.log("racks", racks);
         //window.addEventListener('contextmenu', onRightClick, false);
