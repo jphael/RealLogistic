@@ -230,15 +230,15 @@
                             </div>
                             <div class="mb-3">
                                 <label for="last_name" class="form-label required">Nom de famille</label>
-                                <input type="text" id="last_name"  name="last_name" class="form-control" value="{{ Auth::user()->nom ?? '' }}" placeholder="Saisissez votre nom de famille" required>
+                                <input type="text" id="last_name" name="last_name" class="form-control" value="{{ Auth::user()->nom ?? '' }}" placeholder="Saisissez votre nom de famille" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label required">E-mail</label>
-                                <input type="email" id="email"  name="email" class="form-control" value="{{ Auth::user()->email ?? '' }}" placeholder="Saisissez votre e-mail" required>
+                                <input type="email" id="email" name="email" class="form-control" value="{{ Auth::user()->email ?? '' }}" placeholder="Saisissez votre e-mail" required>
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label required">Numéro de téléphone</label>
-                                <input type="tel" id="phone"  name="phone" class="form-control" placeholder="Saisissez votre numéro de téléphone" required>
+                                <input type="tel" id="phone" name="phone" class="form-control" placeholder="Saisissez votre numéro de téléphone" required>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" id="btnSend" class="btn btn-primary">Valider</button>
@@ -328,6 +328,10 @@
         {
             name: 'A4',
             url: '3dLast/A4.glb'
+        },
+        {
+            name: 'A8',
+            url: '3dLast/A8.glb'
         },
         {
             name: 'B2',
@@ -420,6 +424,7 @@
 
     ];
     const racks = [];
+    const racksCategory = [];
 
     const dateToServerStr = (d) => d.getDate().toString().padStart(2, '0') + '.' + (d.getMonth() + 1).toString().padStart(2, '0') + '.' + d.getFullYear();
     const dateToStr = (d) => d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0');
@@ -431,9 +436,10 @@
         //const floor = getDataByName('Floor').gltf.scene;
         const front = getDataByName('FRONT').gltf.scene;
         const rackA1 = getDataByName('A1').gltf.scene;
-        
+
         const rackA3 = getDataByName('A3').gltf.scene;
         const rackA4 = getDataByName('A4').gltf.scene;
+        const rackA8 = getDataByName('A8').gltf.scene;
         const left = getDataByName('LEFT').gltf.scene;
         const right = getDataByName('RIGHT').gltf.scene;
         const Back = getDataByName('BACK').gltf.scene;
@@ -462,9 +468,11 @@
 
         const box = new Box3();
         let backZ, leftX, rightX;
-        scene.add(front,rackA1, rackA3,rackA4, left,right,Back, rackB2,rackB6,rackB12,rackB13,rackC6,rackD15,rackD17,rackD18,rackD19,rackD20,
-        rackE2,rackE4,rackE15,rackG6,rackG8,rackG14,rackH12,rackJ12);
-        //scene.add(Back, Bureaux, floor, front, left, right, rackA1, rackA3);
+        /*scene.add(front, rackA1, rackA3, rackA4, rackA8, left, right, Back, rackB2, rackB6, rackB12, rackB13, rackC6, rackD15, rackD17, rackD18, rackD19, rackD20,
+            rackE2, rackE4, rackE15, rackG6, rackG8, rackG14, rackH12, rackJ12);*/
+        scene.add(front, left, right, Back);
+        racksCategory.push(rackA1, rackA3, rackA4, rackA8, rackB2, rackB6, rackB12, rackB13, rackC6, rackD15, rackD17, rackD18, rackD19, rackD20,
+            rackE2, rackE4, rackE15, rackG6, rackG8, rackG14, rackH12, rackJ12);
 
         const boundingBox = new Box3().setFromObject(rackA1);
         const sizerack1 = new Vector3();
@@ -475,7 +483,7 @@
         const getSerial = () => (++serial).toString().padStart(4, '0');
         let rakNumber = 1;
 
-        function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction, basename) {
+        function cloneAndPositionInDirection(rack, lastRackPosition, offset, direction, basename, autoPosition = true) {
             const clone = rack.clone();
 
             // Assurez-vous que chaque partie du clone a son propre matériau
@@ -487,67 +495,69 @@
 
             clone.userData.price = 10; // Attribuer le prix dans les données utilisateur
 
-            // Positionner le clone perpendiculairement selon la direction choisie
-            switch (direction) {
-                case "est":
-                    clone.position.x = lastRackPosition.x + offset * sizerack1.x;
-                    clone.position.z = lastRackPosition.z; // Même position z
-                    break;
+            // Positionner le clone uniquement si autoPosition est vrai
+            if (autoPosition) {
+                switch (direction) {
+                    case "est":
+                        clone.position.x = lastRackPosition.x + offset * sizerack1.x;
+                        clone.position.z = lastRackPosition.z; // Même position z
+                        break;
 
-                case "ouest":
-                    clone.position.x = lastRackPosition.x - offset * sizerack1.x;
-                    clone.position.z = lastRackPosition.z; // Même position z
-                    break;
+                    case "ouest":
+                        clone.position.x = lastRackPosition.x - offset * sizerack1.x;
+                        clone.position.z = lastRackPosition.z; // Même position z
+                        break;
 
-                case "nord":
-                    clone.position.x = lastRackPosition.x; // Même position x
-                    clone.position.z = lastRackPosition.z - offset * sizerack1.z;
-                    break;
+                    case "nord":
+                        clone.position.x = lastRackPosition.x; // Même position x
+                        clone.position.z = lastRackPosition.z - offset * sizerack1.z;
+                        break;
 
-                case "sud":
-                    clone.position.x = lastRackPosition.x; // Même position x
-                    clone.position.z = lastRackPosition.z + offset * sizerack1.z;
-                    break;
+                    case "sud":
+                        clone.position.x = lastRackPosition.x; // Même position x
+                        clone.position.z = lastRackPosition.z + offset * sizerack1.z;
+                        break;
 
-                default:
-                    console.error("Direction non valide ! Utilisez 'est', 'ouest', 'nord' ou 'sud'.");
-                    return null;
+                    default:
+                        console.error("Direction non valide ! Utilisez 'est', 'ouest', 'nord' ou 'sud'.");
+                        return null;
+                }
             }
 
-            console.log('eto', clone);
-            const box0_1 = clone.getObjectByName('Box_33050');
-            const box0_2 = clone.getObjectByName('Box_33051');
-            const box0_3 = clone.getObjectByName('Box_33049');
-            const box1_1 = clone.getObjectByName('Box_33047');
-            const box1_2 = clone.getObjectByName('Box_33046');
-            const box1_3 = clone.getObjectByName('Box_33048');
+            // Initialisation des boîtes
+            const boxNames = [
+                "Box_E0C1", "Box_E0C2", "Box_E0C3",
+                "Box_E1C1", "Box_E1C2", "Box_E1C3",
+                "Box_E2C1", "Box_E2C2", "Box_E2C3",
+                "Box_E3C1", "Box_E3C2", "Box_E3C3",
+            ];
 
+            const initializedBoxes = boxNames.map((name) => {
+                const box = clone.getObjectByName(name);
+                if (box) {
+                    initBoxe(basename, box, getSerial(), name);
+                }
+                return box;
+            }).filter(Boolean); // Filtrer pour ne garder que les boîtes non nulles
 
-            if (box0_1) initBoxe(basename, box0_1, getSerial(), 'E0C1');
-            if (box0_2) initBoxe(basename, box0_2, getSerial(), 'E0C2');
-            if (box0_3) initBoxe(basename, box0_3, getSerial(), 'E0C3');
-            if (box1_1) initBoxe(basename, box1_1, getSerial(), 'E1C1');
-            if (box1_2) initBoxe(basename, box1_2, getSerial(), 'E1C2');
-            if (box1_3) initBoxe(basename, box1_3, getSerial(), 'E1C3');
-
-            console.log('box0_1', box0_1);
             // Ajouter le clone à la scène
             scene.add(clone);
 
             // Ajouter les boîtes individuelles au tableau racks
-            racks.push(
-                ...(box1_1 ? [box1_1] : []),
-                ...(box1_2 ? [box1_2] : []),
-                ...(box1_3 ? [box1_3] : []),
-                ...(box0_1 ? [box0_1] : []),
-                ...(box0_2 ? [box0_2] : []),
-                ...(box0_3 ? [box0_3] : [])
-            );
+            racks.push(...initializedBoxes);
 
             return clone;
         }
 
         let offset = 1;
+        racksCategory.forEach(rack => {
+            cloneAndPositionInDirection(rack, rack.position, 1, "sud", "CAT", false);
+        });
+        /*for (let i = 0; i < 2; i++) {
+            lastRack = cloneAndPositionInDirection(rackA1, lastRack.position, offset, "sud", `A`);
+            offset = 1;
+        }*/
+
         /*let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "I");
 
         console.log("lasRack", lastRack);
@@ -563,17 +573,17 @@
 
         initAllBoxesBystatusApi();
 
-        freeBoxMaterial = boxMaterial.clone();
-        freeBoxMaterial.visible = false;
+        //freeBoxMaterial = boxMaterial.clone();
+        //freeBoxMaterial.visible = false;
         //freeBoxMaterial.transparent = true;
         //freeBoxMaterial.opacity = 0.5;
-        freeBoxHighlightedMaterial = boxMaterial.clone();
-        freeBoxHighlightedMaterial.color.set(0x99FF00);
-        freeBoxOverMaterial = boxMaterial.clone();
+        //freeBoxHighlightedMaterial = boxMaterial.clone();
+        //freeBoxHighlightedMaterial.color.set(0x99FF00);
+        //freeBoxOverMaterial = boxMaterial.clone();
         //freeBoxOverMaterial.color.set( 0x33CC00 );
-        freeBoxTransparentMaterial = freeBoxMaterial.clone();
-        freeBoxTransparentMaterial.transparent = true;
-        freeBoxTransparentMaterial.opacity = 0.5;
+        //freeBoxTransparentMaterial = freeBoxMaterial.clone();
+        //freeBoxTransparentMaterial.transparent = true;
+        //freeBoxTransparentMaterial.opacity = 0.5;
         //boxMaterial.color.set( 0xFF00FF );
         //boxMaterial.transparent = true;
         //boxMaterial.opacity = 0.5;
@@ -972,7 +982,7 @@
         $('.input-group-text').on('click', function() {
             $(this).siblings('input').datepicker('show');
         });
-        
+
         $('#btnSend').on('click', function() {
             const form = document.getElementById('data-form');
 
