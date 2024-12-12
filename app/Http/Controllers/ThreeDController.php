@@ -157,4 +157,75 @@ class ThreeDController extends Controller
             //return $e;
         }
     }
+
+
+    public function reserveBoxesRL(Request $request)
+    {
+        $reserveId = DB::table('reallogistic_reserve')->insertGetId([
+            'box_id' => "BOXIDTEST_".$request->input('category', ''),
+            'start' => strtotime("2024-12-07"),
+            'finish' => strtotime("2024-12-09"),
+            //'price' => 200
+        ]);
+        dd($request->all());
+        //return response()->json(['status' => 'done']);
+        try {
+            $boxIds = $request->input('box_id');
+            $start = $request->input('start');
+            $finish = $request->input('finish');
+
+            if (!$boxIds || !$start || !$finish) {
+                return response()->json(['error' => 'Missing parameters'], 400);
+            }
+
+            $boxIds = explode(',', $boxIds);
+            $reserveIds = [];
+
+            foreach ($boxIds as $boxId) {
+                $reserved = DB::table('reallogistic_reserve')
+                    ->where('box_id', $boxId)
+                    ->where('start', strtotime($start))
+                    ->where('finish', strtotime($finish))
+                    ->exists();
+
+                if (!$reserved) {
+                    $reserveId = DB::table('reallogistic_reserve')->insertGetId([
+                        'box_id' => $boxId,
+                        'start' => strtotime($start),
+                        'finish' => strtotime($finish),
+                        //'price' => 200
+                    ]);
+                    $reserveIds[] = $reserveId;
+                }
+            }
+
+            $file = $request->file('file');
+            $fileName = $file ? md5(time()) . '.' . $file->getClientOriginalExtension() : '';
+            if ($file) {
+                Storage::putFileAs('uploads', $file, $fileName);
+            }
+
+            DB::table('reallogistic_reserve_data')->insert([
+                'reserve_ids' => implode(',', $reserveIds),
+                'category' => $request->input('category', ''),
+                'file' => $fileName,
+                'comment' => $request->input('comment', ''),
+                'first_name' => $request->input('first_name', ''),
+                'last_name' => $request->input('last_name', ''),
+                'email' => $request->input('email', ''),
+                'phone' => $request->input('phone', '')
+            ]);
+
+            // Clear cache for free boxes
+            $cacheKey = 'free_boxes_reallogistic_' . md5($start . $finish);
+            Cache::forget($cacheKey);
+
+            // $this->sendEmailNotification($request, $boxIds, $fileName);
+
+            return response()->json(['status' => 'done']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error']);
+        }
+    }
 }
+

@@ -530,6 +530,7 @@
                 "Box_E1C1", "Box_E1C2", "Box_E1C3",
                 "Box_E2C1", "Box_E2C2", "Box_E2C3",
                 "Box_E3C1", "Box_E3C2", "Box_E3C3",
+                "Box_E4C1", "Box_E4C2", "Box_E4C3",
             ];
 
             const initializedBoxes = boxNames.map((name) => {
@@ -549,23 +550,18 @@
             return clone;
         }
 
-        let offset = 1;
+        let lastRack = null;
         racksCategory.forEach(rack => {
             cloneAndPositionInDirection(rack, rack.position, 1, "sud", "CAT", false);
         });
-        /*for (let i = 0; i < 2; i++) {
-            lastRack = cloneAndPositionInDirection(rackA1, lastRack.position, offset, "sud", `A`);
-            offset = 1;
-        }*/
-
-        /*let lastRack = cloneAndPositionInDirection(rackB2, rackB2.position, 3, "ouest", "I");
-
-        console.log("lasRack", lastRack);
-        for (let i = 0; i < 5; i++) {
-            lastRack = cloneAndPositionInDirection(rackB2, lastRack.position, offset, "sud", `A`);
-            offset = 1;
-        }*/
-
+        cloneAndPositionInDirection(rackA1, rackA1.position, 1, "sud", `A`);
+        let offset = 4;
+        for (let i = 0; i < 3; i++) {
+           cloneAndPositionInDirection(rackA1, rackA1.position, offset, "sud", `A`);
+           offset ++;
+        }
+        lastRack = rackA1.clone();
+        cloneAndPositionInDirection(lastRack, rackB2.position, 1, "nord", `B`);
         console.log("racks", racks);
         //window.addEventListener('contextmenu', onRightClick, false);
         window.addEventListener('click', onRightClick, false);
