@@ -161,44 +161,37 @@ class ThreeDController extends Controller
 
     public function reserveBoxesRL(Request $request)
     {
-        $reserveId = DB::table('reallogistic_reserve')->insertGetId([
-            'box_id' => "BOXIDTEST_".$request->input('category', ''),
-            'start' => strtotime("2024-12-07"),
-            'finish' => strtotime("2024-12-09"),
-            //'price' => 200
-        ]);
-        dd($request->all());
-        //return response()->json(['status' => 'done']);
+
         try {
-            $boxIds = $request->input('box_id');
+            /*$boxIds = $request->input('box_id');
             $start = $request->input('start');
             $finish = $request->input('finish');
 
             if (!$boxIds || !$start || !$finish) {
                 return response()->json(['error' => 'Missing parameters'], 400);
-            }
+            }*/
 
-            $boxIds = explode(',', $boxIds);
+            $category = $request->input('category');
+            $file = $request->input('file');
+            $comment = $request->input('comment');
+            $first_name = $request->input('first_name');
+            $last_name = $request->input('last_name');
+            $email = $request->input('email');
+            $phone = $request->input('phone');
+            $selectedBoxNames = $request->input('selectedBoxNames');
+            
+            $boxIds = explode(',', $selectedBoxNames);
             $reserveIds = [];
 
             foreach ($boxIds as $boxId) {
-                $reserved = DB::table('reallogistic_reserve')
-                    ->where('box_id', $boxId)
-                    ->where('start', strtotime($start))
-                    ->where('finish', strtotime($finish))
-                    ->exists();
-
-                if (!$reserved) {
-                    $reserveId = DB::table('reallogistic_reserve')->insertGetId([
-                        'box_id' => $boxId,
-                        'start' => strtotime($start),
-                        'finish' => strtotime($finish),
-                        //'price' => 200
-                    ]);
-                    $reserveIds[] = $reserveId;
-                }
+                $reserveId = DB::table('reallogistic_reserve')->insertGetId([
+                    'box_id' => $boxId,
+                    'start' => strtotime("2024-12-07"),
+                    'finish' => strtotime("2024-12-09"),
+                    //'price' => 200
+                ]);
             }
-
+            return  back();
             $file = $request->file('file');
             $fileName = $file ? md5(time()) . '.' . $file->getClientOriginalExtension() : '';
             if ($file) {
@@ -224,8 +217,8 @@ class ThreeDController extends Controller
 
             return response()->json(['status' => 'done']);
         } catch (Exception $e) {
+            dd('erreur',$e);
             return response()->json(['status' => 'error']);
         }
     }
 }
-

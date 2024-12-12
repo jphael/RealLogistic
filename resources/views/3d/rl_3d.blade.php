@@ -240,6 +240,8 @@
                                 <label for="phone" class="form-label required">Numéro de téléphone</label>
                                 <input type="tel" id="phone" name="phone" class="form-control" placeholder="Saisissez votre numéro de téléphone" required>
                             </div>
+                            <input type="hidden" id="selectedBoxNames" name="selectedBoxNames" >
+
                             <div class="d-grid">
                                 <button type="submit" id="btnSend" class="btn btn-primary">Valider</button>
                             </div>
@@ -982,6 +984,12 @@
         $('#btnSend').on('click', function() {
             const form = document.getElementById('data-form');
 
+
+            const selectedBoxNamesString = selectedBoxNames.join(','); // 'CAT0188Box_E2C2,CAT0091Box_E4C1,CAT0149Box_E2C2'
+
+            alert(selectedBoxNamesString);
+            // Ajouter la chaîne dans l'input caché
+            document.getElementById('selectedBoxNames').value = selectedBoxNamesString;
             // Vérifie la validité du formulaire avant de le soumettre
             if (form.checkValidity()) {
                 form.submit(); // Soumission manuelle
