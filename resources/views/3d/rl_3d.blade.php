@@ -340,6 +340,10 @@
             url: '3dLast/B2.glb'
         },
         {
+            name: 'B1',
+            url: '3dLast/B1.glb'
+        },
+        {
             name: 'B6',
             url: '3dLast/B6.glb'
         },
@@ -422,6 +426,42 @@
         {
             name: 'RIGHT',
             url: '3dLast/RIGHT.glb'
+        },
+        {
+            name: 'C1',
+            url: '3dLast/C1.glb'
+        },
+        {
+            name: 'D2',
+            url: '3dLast/D2.glb'
+        },
+        {
+            name: 'E1',
+            url: '3dLast/E1.glb'
+        },
+        {
+            name: 'F1',
+            url: '3dLast/F1.glb'
+        },
+        {
+            name: 'G1',
+            url: '3dLast/G1.glb'
+        },
+        {
+            name: 'H1',
+            url: '3dLast/H1.glb'
+        },
+        {
+            name: 'L1',
+            url: '3dLast/H1.glb'
+        },
+        {
+            name: 'J1',
+            url: '3dLast/J1.glb'
+        },
+        {
+            name: 'I1',
+            url: '3dLast/I1.glb'
         }
 
     ];
@@ -446,6 +486,7 @@
         const right = getDataByName('RIGHT').gltf.scene;
         const Back = getDataByName('BACK').gltf.scene;
         const rackB2 = getDataByName('B2').gltf.scene;
+        const rackB1 = getDataByName('B1').gltf.scene;
 
         const rackB6 = getDataByName('B6').gltf.scene;
         const rackB12 = getDataByName('B12').gltf.scene;
@@ -464,6 +505,16 @@
         const rackG14 = getDataByName('G14').gltf.scene;
         const rackH12 = getDataByName('H12').gltf.scene;
         const rackJ12 = getDataByName('J12').gltf.scene;
+        //C1   D2 E1	F1	G1	H1	L1	J1
+        const rackC1 = getDataByName('C1').gltf.scene;
+        const rackD2 = getDataByName('D2').gltf.scene;
+        const rackE1= getDataByName('E1').gltf.scene;
+        const rackF1 = getDataByName('F1').gltf.scene;
+        const rackG1 = getDataByName('G1').gltf.scene;
+        const rackH1 = getDataByName('H1').gltf.scene;
+        const rackL1 = getDataByName('L1').gltf.scene;
+        const rackJ1 = getDataByName('J1').gltf.scene;
+        const rackI1 = getDataByName('I1').gltf.scene;
 
         /*
         const g8 = getDataByName('G8').gltf.scene;*/
@@ -473,8 +524,11 @@
         /*scene.add(front, rackA1, rackA3, rackA4, rackA8, left, right, Back, rackB2, rackB6, rackB12, rackB13, rackC6, rackD15, rackD17, rackD18, rackD19, rackD20,
             rackE2, rackE4, rackE15, rackG6, rackG8, rackG14, rackH12, rackJ12);*/
         scene.add(front, left, right, Back);
-        racksCategory.push(rackA1, rackA3, rackA4, rackA8, rackB2, rackB6, rackB12, rackB13, rackC6, rackD15, rackD17, rackD18, rackD19, rackD20,
+        racksCategory.push(rackA1, rackA3, rackA4, rackA8,rackB1, rackB2, rackB6, rackB12, rackB13, rackC6, rackD15, rackD17, rackD18, rackD19, rackD20,
             rackE2, rackE4, rackE15, rackG6, rackG8, rackG14, rackH12, rackJ12);
+
+        //C1   D2 E1	F1	G1	H1	L1	J1
+        racksCategory.push(rackC1,rackD2,rackE1,rackF1,rackG1,rackH1,rackL1,rackJ1,rackI1);
 
         const boundingBox = new Box3().setFromObject(rackA1);
         const sizerack1 = new Vector3();
@@ -562,38 +616,67 @@
            cloneAndPositionInDirection(rackA1, rackA1.position, offset, "sud", `A`);
            offset ++;
         }
-        lastRack = rackA1.clone();
-        cloneAndPositionInDirection(lastRack, rackB2.position, 1, "nord", `B`);
+        cloneAndPositionInDirection(rackB13, rackB13.position, 1, "sud", `B`);
+
+        //		1 2 3 (4) 5 6 7 8 9 (10) (11) 12 13 14 15 16 17
+        for (let i = 1; i < 18; i++) {
+            if(i==4 || i==10 || i==11) continue;
+           cloneAndPositionInDirection(rackB1, rackB1.position, i+1, "sud", `B`);
+        }
+
+        //1 2 3 4 (5) (6) 7 8 9 10 11 12 13 14 15 16 17 18
+        for (let i = 1; i < 19; i++) {
+            if(i==5) continue;
+           cloneAndPositionInDirection(rackC1, rackC1.position, i, "sud", `C`);
+        }
+
+        for (let i = 1; i < 13; i++) {
+           cloneAndPositionInDirection(rackD2, rackD2.position, i, "sud", `D`);
+        }
+
+        //E
+        cloneAndPositionInDirection(rackE2, rackE2.position, 10, "sud", `E`);
+
+        //(1) 2 (3) 4 5 6 7 8 9 10 (11) 12 13 (14) 15 16 17 18
+        for (let i = 1; i < 23; i++) {
+           cloneAndPositionInDirection(rackE1, rackE1.position, i, "sud", `E`);
+        }
+
+        //F (1) (11)
+        for (let i = 1; i < 23; i++) {
+            if(i==1 || i==11) continue;
+           cloneAndPositionInDirection(rackF1, rackF1.position, i, "sud", `F`);
+        }
+
+         //G (1) (5-7-11-13)
+         for (let i = 1; i < 23; i++) {
+            if(i==1 || i==5 || i==7 || i==11 || i==13) continue;
+           cloneAndPositionInDirection(rackG1, rackG1.position, i, "sud", `G`);
+        }
+
+        //H (1-3-4-12-11)
+        for (let i = 1; i < 23; i++) {
+            if(i==1 || i==3 || i==4 || i==11 || i==12) continue;
+           cloneAndPositionInDirection(rackH1, rackH1.position, i, "sud", `H`);
+        }
+
+         //I (1-11-20-21)
+        for (let i = 1; i < 23; i++) {
+            if(i==1 || i==11 || i==20 || i==21) continue;
+           cloneAndPositionInDirection(rackI1, rackI1.position, i, "sud", `I`);
+        }
+        //J
+        for (let i = 1; i < 23; i++) {
+            if(i==11) continue;
+           cloneAndPositionInDirection(rackJ1, rackJ1.position, i, "sud", `J`);
+        }
         console.log("racks", racks);
         //window.addEventListener('contextmenu', onRightClick, false);
         window.addEventListener('click', onRightClick, false);
         window.addEventListener('mousemove', onMouseMove, false);
 
         initAllBoxesBystatusApi();
-
-        //freeBoxMaterial = boxMaterial.clone();
-        //freeBoxMaterial.visible = false;
-        //freeBoxMaterial.transparent = true;
-        //freeBoxMaterial.opacity = 0.5;
-        //freeBoxHighlightedMaterial = boxMaterial.clone();
-        //freeBoxHighlightedMaterial.color.set(0x99FF00);
-        //freeBoxOverMaterial = boxMaterial.clone();
-        //freeBoxOverMaterial.color.set( 0x33CC00 );
-        //freeBoxTransparentMaterial = freeBoxMaterial.clone();
-        //freeBoxTransparentMaterial.transparent = true;
-        //freeBoxTransparentMaterial.opacity = 0.5;
-        //boxMaterial.color.set( 0xFF00FF );
-        //boxMaterial.transparent = true;
-        //boxMaterial.opacity = 0.5;
         box.makeEmpty();
-        //box.expandByObject(shelving);
-        const center = box.getCenter(new Vector3());
-        const size = box.getSize(new Vector3());
-        //console.log( box, size, center );
-        const ox = ((rightX - leftX) - size.x * 8) / 4.2;
-        const cx = (leftX + rightX) / 2 - ox / 4.2;
-
-
 
     };
 
@@ -987,7 +1070,6 @@
 
             const selectedBoxNamesString = selectedBoxNames.join(','); // 'CAT0188Box_E2C2,CAT0091Box_E4C1,CAT0149Box_E2C2'
 
-            alert(selectedBoxNamesString);
             // Ajouter la chaîne dans l'input caché
             document.getElementById('selectedBoxNames').value = selectedBoxNamesString;
             // Vérifie la validité du formulaire avant de le soumettre
